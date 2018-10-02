@@ -1,15 +1,14 @@
 <template>
     <div class="popup">
         <div class="header">
+            <ListSelector></ListSelector>
+        </div>
+        <div class="header">
             <div>
-                <el-tooltip class="item" effect="light" content="Bookmark current page" placement="bottom">
+                <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
                     <el-button type="warning" icon="el-icon-star-off" size="small" circle
                                @click="newBookmark" ></el-button>
                 </el-tooltip>
-            </div>
-            <div>
-                <el-checkbox v-model="showAllSubdomains" @change="changedDomainsOptions">Show all subdomains</el-checkbox>
-                <div class="checkBoxSubtitle">{{ subdomainsCurrentOption }}</div>
             </div>
         </div>
         <div class="items">
@@ -32,6 +31,7 @@
   import bookmarks from '../api/bookmarks'
   import tabs from '../api/tabs'
   import BookmarkCard from '../components/BookmarkCard'
+  import ListSelector from '../components/ListSelector'
 
   export default {
     data: () => ({
@@ -42,7 +42,8 @@
       currentSubdomain: null
     }),
     components: {
-      BookmarkCard
+      BookmarkCard,
+      ListSelector
     },
     computed: {
       subdomainsCurrentOption () {
