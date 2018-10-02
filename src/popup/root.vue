@@ -1,9 +1,14 @@
 <template>
     <div class="popup">
-        <div class="header">
-            <ListSelector></ListSelector>
+        <div class="listSelector">
+            <ListSelector
+                :lists="lists"
+                :selectedListId="1"
+                @created="listCreated"
+                @deleted="listDeleted"
+            ></ListSelector>
         </div>
-        <div class="header">
+        <!--<div class="header">
             <div>
                 <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
                     <el-button type="warning" icon="el-icon-star-off" size="small" circle
@@ -20,7 +25,7 @@
                           @updated="updatedBookmark"
             >
             </BookmarkCard>
-        </div>
+        </div>-->
     </div>
 </template>
 
@@ -39,7 +44,13 @@
       currentUrl: null,
       showAllSubdomains: true,
       currentTopDomain: null,
-      currentSubdomain: null
+      currentSubdomain: null,
+      lists: [
+        {
+          id: 1,
+          name: 'Default'
+        }
+      ]
     }),
     components: {
       BookmarkCard,
@@ -64,6 +75,18 @@
       })
     },
     methods: {
+      listCreated (list) {
+        console.log(list)
+        this.lists.push(list)
+      },
+      listDeleted (list) {
+        for (let i = 0; i < this.lists.length; i++) {
+          if (this.lists[i].id === list.id) {
+            this.lists.splice(i, 1)
+            return
+          }
+        }
+      },
       clickLink (bookmark) {
         const { url } = bookmark
         chrome.tabs.query({active: true, currentWindow: true}, tabs => {
@@ -109,7 +132,7 @@
 <style lang="scss">
 .popup {
   width: 350px;
-  min-height: 80px;
+  min-height: 180px;
   max-height: 500px;
   overflow-y: auto;
 }

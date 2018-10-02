@@ -1,23 +1,30 @@
 <template>
   <div>
-
-    <div v-if="currentList && !creatingNew">
-      <el-dropdown @command="onChange">
+    <div v-if="currentList && !creatingNew" class="listMenu">
+      <el-dropdown class="dropDownContainer" @command="onChange" trigger="click" size="mini">
         <span class="el-dropdown-link">
-          {{ currentList.title }} <i class="el-icon-arrow-down el-icon--right"></i>
+          <span>{{ currentList.name }}</span> <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>Bicycle</el-dropdown-item>
-          <el-dropdown-item>Stroller</el-dropdown-item>
+        <el-dropdown-menu slot="dropdown" class="dropDown">
+          <el-dropdown-item v-for="list in lists" :key="list.id" :command="list.id">{{ list.name }}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button type="default" size="mini" @click="onNew(currentList)">New list</el-button>
-      <el-button type="default" size="mini" @click="onDelete(currentList)">Delete list</el-button>
+
+      <el-button type="default" size="mini" @click="onNew(currentList)">
+        New list
+      </el-button>
+      <el-button type="default" size="mini"
+                 @click="onDelete(currentList)"
+                 :disabled="this.currentList.id === 1"
+      >
+        Delete list
+      </el-button>
     </div>
 
-    <div v-if="!currentList || creatingNew">
-      <el-input placeholder="Enter the new list title" v-model="input"></el-input>
-      <el-button type="primary" >Save</el-button>
+    <div v-if="!lists || creatingNew">
+      <el-input placeholder="Enter the new list title" v-model="inputName" size="mini"></el-input>
+      <el-button type="primary" size="mini" @click="onSave" :disabled="!inputName" >Save</el-button>
+      <el-button type="default" size="mini" @click="onCacnel" >Cancel</el-button>
     </div>
   </div>
 </template>
@@ -27,14 +34,23 @@
     name: 'ListSelector',
     data () {
       return {
-        creatingNew: false
+        creatingNew: false,
+        currentList: null,
+        inputName: ''
+      }
+    },
+    created () {
+      if (this.lists && this.selectedListId) {
+        this.currentList = this.listById(this.selectedListId)
+      } else if (this.lists) {
+        this.currentList = this.lists[0]
       }
     },
     props: {
-      currentList: {
-        type: Object,
+      selectedListId: {
+        type: Number,
         required: false,
-        default: null
+        default: 0
       },
       lists: {
         type: Array,
@@ -43,21 +59,46 @@
       }
     },
     methods: {
+      listById (listId) {
+        return this.lists.find(item => item.id === listId)
+      },
+      createNewList (name) {
+        return {
+          name,
+          id: (new Date()).getTime()
+        }
+      },
       onChange (listId) {
-        console.log(listId)
+        this.currentList = this.listById(listId)
+        this.$emit('changed', this.currentList)
       },
       onNew () {
         this.creatingNew = true
       },
-      onDelete (list) {
-        console.log('delete', list)
+      onDelete () {
+        this.$emit('deleted', this.currentList)
+        this.currentList = this.listById(1)
       },
       onSave () {
-
+        this.creatingNew = false
+        this.currentList = this.createNewList(this.inputName)
+        this.inputName = ''
+        this.$emit('created', this.currentList)
       }
     }
   }
 </script>
 
 <style scoped>
+  .el-dropdown-link {
+  }
+  .listMenu {
+  }
+  .dropDownContainer {
+    flex-grow: 0;
+  }
+  .dropDown {
+    max-height: 80px;
+    overflow-y: auto;
+  }
 </style>
