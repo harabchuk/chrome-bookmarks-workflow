@@ -8,6 +8,13 @@
                 @deleted="listDeleted"
             ></ListSelector>
         </div>
+        <div v-if="currentUrl">
+            <AddBookmark
+                :title="currentTitle"
+                :url="currentUrl"
+                @saved="bookmarkCreated"
+            ></AddBookmark>
+        </div>
         <!--<div class="header">
             <div>
                 <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
@@ -30,18 +37,19 @@
 </template>
 
 <script>
-  import URL from 'url-parse'
   import domain from '../utils/domain'
   import storage from '../api/storage'
   import bookmarks from '../api/bookmarks'
   import tabs from '../api/tabs'
   import BookmarkCard from '../components/BookmarkCard'
   import ListSelector from '../components/ListSelector'
+  import AddBookmark from '../components/AddBookmark'
 
   export default {
     data: () => ({
       items: [],
       currentUrl: null,
+      currentTitle: '',
       showAllSubdomains: true,
       currentTopDomain: null,
       currentSubdomain: null,
@@ -54,7 +62,8 @@
     }),
     components: {
       BookmarkCard,
-      ListSelector
+      ListSelector,
+      AddBookmark
     },
     computed: {
       subdomainsCurrentOption () {
@@ -63,8 +72,8 @@
     },
     created () {
       tabs.currentTab().then(activeTab => {
-        const urlObject = new URL(activeTab.url)
-        this.currentUrl = urlObject
+        this.currentUrl = activeTab.url
+        this.currentTitle = activeTab.title
         this.currentTopDomain = domain.getDomain(activeTab.url, 2)
         this.currentSubdomain = domain.getDomain(activeTab.url, 3)
         this.showAllSubdomains = storage.get('show_subdomains_' + this.currentTopDomain)
@@ -86,6 +95,9 @@
             return
           }
         }
+      },
+      bookmarkCreated (bookmark) {
+
       },
       clickLink (bookmark) {
         const { url } = bookmark
