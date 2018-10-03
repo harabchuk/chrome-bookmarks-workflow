@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!editing">
-      <el-button @click="onAdd">Add current page</el-button>
+      <el-button size="mini" @click="onAdd">+ Bookmark</el-button>
     </div>
     <div v-if="editing">
       <el-input type="textarea" v-model="inputTitle"></el-input>

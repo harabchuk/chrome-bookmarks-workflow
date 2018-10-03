@@ -2,9 +2,9 @@
   <div>
     <div v-if="currentList && !creatingNew" class="listMenu">
       <el-dropdown class="dropDownContainer" @command="onChange" trigger="click" size="mini">
-        <span class="el-dropdown-link">
-          <span>{{ currentList.name }}</span> <i class="el-icon-arrow-down el-icon--right"></i>
-        </span>
+        <div class="el-dropdown-link">
+          <span class="currentItem">{{ currentList.name }}</span> <i class="el-icon-arrow-down el-icon--right"></i>
+        </div>
         <el-dropdown-menu slot="dropdown" class="dropDown">
           <el-dropdown-item v-for="list in lists" :key="list.id" :command="list.id">{{ list.name }}</el-dropdown-item>
         </el-dropdown-menu>
@@ -90,12 +90,15 @@
 </script>
 
 <style scoped>
-  .el-dropdown-link {
-  }
   .listMenu {
   }
+  .el-dropdown-link {
+    text-decoration: dashed;
+  }
+  .currentItem {
+    text-decoration: dashed;
+  }
   .dropDownContainer {
-    flex-grow: 0;
   }
   .dropDown {
     max-height: 80px;

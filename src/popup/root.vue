@@ -1,19 +1,27 @@
 <template>
     <div class="popup">
-        <div class="listSelector">
-            <ListSelector
+        <div class="listControls">
+            <a href="#">New list</a><a href="#">Delete list</a>
+        </div>
+        <div class="addBookmark">
+            <el-button size="mini">Add bookmark</el-button>
+            <span>to</span>
+             <ListSelector
                 :lists="lists"
                 :selectedListId="1"
                 @created="listCreated"
                 @deleted="listDeleted"
             ></ListSelector>
         </div>
-        <div v-if="currentUrl">
+        <div class="listSelector">
             <AddBookmark
                 :title="currentTitle"
                 :url="currentUrl"
                 @saved="bookmarkCreated"
             ></AddBookmark>
+        </div>
+        <div v-if="currentUrl">
+
         </div>
         <!--<div class="header">
             <div>
@@ -142,6 +150,19 @@
 </script>
 
 <style lang="scss">
+    .listControls {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+    }
+    .listControls a {
+        margin-left: 1em;
+        align-self: flex-end;
+    }
+
+.addBookmark {
+    display: flex;
+}
 .popup {
   width: 350px;
   min-height: 180px;
