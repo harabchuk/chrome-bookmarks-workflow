@@ -1,47 +1,44 @@
 <template>
-    <div class="popup">
-        <div class="listControls">
-            <a href="#">New list</a><a href="#">Delete list</a>
-        </div>
-        <div class="addBookmark">
-            <el-button size="mini">Add bookmark</el-button>
-            <span>to</span>
-             <ListSelector
-                :lists="lists"
-                :selectedListId="1"
-                @created="listCreated"
-                @deleted="listDeleted"
-            ></ListSelector>
-        </div>
-        <div class="listSelector">
-            <AddBookmark
-                :title="currentTitle"
-                :url="currentUrl"
-                @saved="bookmarkCreated"
-            ></AddBookmark>
-        </div>
-        <div v-if="currentUrl">
-
-        </div>
-        <!--<div class="header">
-            <div>
-                <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
-                    <el-button type="warning" icon="el-icon-star-off" size="small" circle
-                               @click="newBookmark" ></el-button>
-                </el-tooltip>
-            </div>
-        </div>
-        <div class="items">
-            <BookmarkCard v-for="bookmark in items"
-                          :bookmark="bookmark" :key="bookmark.url"
-                          :active="bookmark.url==currentUrl"
-                          @linkClick="clickLink"
-                          @delete="deleteBookmark"
-                          @updated="updatedBookmark"
-            >
-            </BookmarkCard>
-        </div>-->
+  <div class="popup">
+    <div class="listSelector">
+      <ListSelector
+          :lists="lists"
+          :selectedListId="1"
+          @created="listCreated"
+          @deleted="listDeleted"
+      ></ListSelector>
     </div>
+    <div v-if="lists">
+      <div v-if="currentUrl" class="addBookmark">
+        <AddBookmark
+            :title="currentTitle"
+            :url="currentUrl"
+            @saved="bookmarkCreated"
+        ></AddBookmark>
+      </div>
+      <div >
+
+      </div>
+    </div>
+    <!--<div class="header">
+        <div>
+            <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
+                <el-button type="warning" icon="el-icon-star-off" size="small" circle
+                           @click="newBookmark" ></el-button>
+            </el-tooltip>
+        </div>
+    </div>
+    <div class="items">
+        <BookmarkCard v-for="bookmark in items"
+                      :bookmark="bookmark" :key="bookmark.url"
+                      :active="bookmark.url==currentUrl"
+                      @linkClick="clickLink"
+                      @delete="deleteBookmark"
+                      @updated="updatedBookmark"
+        >
+        </BookmarkCard>
+    </div>-->
+  </div>
 </template>
 
 <script>
@@ -108,7 +105,7 @@
 
       },
       clickLink (bookmark) {
-        const { url } = bookmark
+        const {url} = bookmark
         chrome.tabs.query({active: true, currentWindow: true}, tabs => {
           const activeTab = tabs[0]
           chrome.tabs.update(activeTab.id, {url})
@@ -150,33 +147,38 @@
 </script>
 
 <style lang="scss">
-    .listControls {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-end;
-    }
-    .listControls a {
-        margin-left: 1em;
-        align-self: flex-end;
-    }
-
-.addBookmark {
+  .listControls {
     display: flex;
-}
-.popup {
-  width: 350px;
-  min-height: 180px;
-  max-height: 500px;
-  overflow-y: auto;
-}
-.header {
-  margin-bottom: 5px;
-  display: flex;
-  justify-content: space-between;
+    flex-direction: row;
+    align-items: flex-end;
+    border: solid 1px red;
+  }
+
+  .listControls a {
+    margin-left: 1em;
+    align-self: flex-end;
+  }
+
+  .addBookmark {
+    display: flex;
+  }
+
+  .popup {
+    width: 350px;
+    min-height: 180px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .header {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-}
-.checkBoxSubtitle {
-  font-size: 80%;
-  margin-left: 24px;
-}
+  }
+
+  .checkBoxSubtitle {
+    font-size: 80%;
+    margin-left: 24px;
+  }
 </style>

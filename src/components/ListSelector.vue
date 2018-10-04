@@ -1,31 +1,31 @@
 <template>
   <div>
-    <div v-if="currentList && !creatingNew" class="listMenu">
-      <el-dropdown class="dropDownContainer" @command="onChange" trigger="click" size="mini">
-        <div class="el-dropdown-link">
-          <span class="currentItem">{{ currentList.name }}</span> <i class="el-icon-arrow-down el-icon--right"></i>
-        </div>
-        <el-dropdown-menu slot="dropdown" class="dropDown">
-          <el-dropdown-item v-for="list in lists" :key="list.id" :command="list.id">{{ list.name }}</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+    <div v-if="currentList && !creatingNew" class="ListSelector">
+      <div class="ListSelector-dropDown">
+        <el-dropdown  @command="onChange" trigger="click" size="mini">
+          <div class="ListSelector-dropDownLink">
+            <span>{{ currentList.name }}</span>
+          </div>
+          <el-dropdown-menu slot="dropdown" class="dropDown">
+            <el-dropdown-item v-for="list in lists" :key="list.id" :command="list.id">{{ list.name }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
 
-      <el-button type="default" size="mini" @click="onNew(currentList)">
+      <el-button type="text" size="mini" @click="onNew(currentList)">
         New list
       </el-button>
-      <el-button type="default" size="mini"
-                 @click="onDelete(currentList)"
-                 :disabled="this.currentList.id === 1"
-      >
+      <el-button type="text" size="mini" @click="onDelete(currentList)" :disabled="this.currentList.id === 1">
         Delete list
       </el-button>
     </div>
 
-    <div v-if="!lists || creatingNew">
+    <div v-if="!lists || creatingNew" class="">
       <el-input placeholder="Enter the new list title" v-model="inputName" size="mini"></el-input>
-      <el-button type="primary" size="mini" @click="onSave" :disabled="!inputName" >Save</el-button>
-      <el-button type="default" size="mini" @click="onCacnel" >Cancel</el-button>
+      <el-button type="primary" size="mini" @click="onSave" :disabled="!inputName">Save</el-button>
+      <el-button type="default" size="mini" @click="onCacnel">Cancel</el-button>
     </div>
+
   </div>
 </template>
 
@@ -90,16 +90,22 @@
 </script>
 
 <style scoped>
-  .listMenu {
+  .ListSelector {
+    display: flex;
   }
-  .el-dropdown-link {
-    text-decoration: dashed;
+
+  .ListSelector-dropDownLink {
+    cursor: pointer;
+    color: #409EFF;
   }
-  .currentItem {
-    text-decoration: dashed;
+  .el-icon-arrow-down {
+    font-size: 12px;
   }
-  .dropDownContainer {
+
+  .ListSelector-dropDown {
+    flex: 1 0 0;
   }
+
   .dropDown {
     max-height: 80px;
     overflow-y: auto;
