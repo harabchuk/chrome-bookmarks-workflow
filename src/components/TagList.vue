@@ -1,15 +1,18 @@
 <template>
-  <div>
+  <div class="TagList">
     <el-tag
         :key="tag"
         v-for="tag in tags"
         closable
         :disable-transitions="false"
-        @close="handleClose(tag)">
+        @close="handleClose(tag)"
+        size="mini"
+        class="TagList-tag"
+    >
       {{tag}}
     </el-tag>
     <el-input
-        class="input-new-tag"
+        class="TagList-input"
         v-if="inputVisible"
         v-model="inputValue"
         ref="saveTagInput"
@@ -18,7 +21,15 @@
         @blur="handleInputConfirm"
     >
     </el-input>
-    <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+    <el-button
+        v-else
+        class="TagList-button"
+        size="mini"
+        @click="showInput"
+        type="info"
+    >
+      + New Tag
+    </el-button>
   </div>
 </template>
 
@@ -63,21 +74,15 @@
 </script>
 
 <style scoped>
-  .el-tag + .el-tag {
-    margin-left: 10px;
+  .TagList-tag {
+    margin-right: 10px;
+    margin-bottom: 5px;
   }
 
-  .button-new-tag {
-    margin-left: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
+  .TagList-button {
   }
 
-  .input-new-tag {
+  .TagList-input {
     width: 90px;
-    margin-left: 10px;
-    vertical-align: bottom;
   }
 </style>

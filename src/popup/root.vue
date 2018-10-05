@@ -1,44 +1,58 @@
 <template>
   <div class="popup">
-    <div class="listSelector">
-      <ListSelector
-          :lists="lists"
-          :selectedListId="1"
-          @created="listCreated"
-          @deleted="listDeleted"
-      ></ListSelector>
-    </div>
-    <div v-if="lists">
-      <div v-if="currentUrl" class="addBookmark">
-        <AddBookmark
-            :title="currentTitle"
-            :url="currentUrl"
-            @saved="bookmarkCreated"
-        ></AddBookmark>
-      </div>
-      <div >
 
+    <div class="header">
+      Bookmarks workflow
+    </div>
+
+    <div class="main">
+
+      <div class="listSelector">
+        <ListSelector
+            :lists="lists"
+            :selectedListId="1"
+            @created="listCreated"
+            @deleted="listDeleted"
+        ></ListSelector>
       </div>
-    </div>
-    <!--<div class="header">
-        <div>
-            <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
-                <el-button type="warning" icon="el-icon-star-off" size="small" circle
-                           @click="newBookmark" ></el-button>
-            </el-tooltip>
+
+      <div v-if="lists">
+        <div v-if="currentUrl">
+          <AddBookmark
+              :title="currentTitle"
+              :url="currentUrl"
+              :bookmark="bookmark"
+              @saved="bookmarkCreated"
+          ></AddBookmark>
         </div>
-    </div>
-    <div class="items">
-        <BookmarkCard v-for="bookmark in items"
-                      :bookmark="bookmark" :key="bookmark.url"
-                      :active="bookmark.url==currentUrl"
-                      @linkClick="clickLink"
-                      @delete="deleteBookmark"
-                      @updated="updatedBookmark"
-        >
-        </BookmarkCard>
-    </div>-->
+
+        <div class="bookmarks">
+          Bookmarks here
+        </div>
+      </div>
+
+    </div> <!-- /main -->
+
+    <div class="footer"></div>
   </div>
+  <!--<div class="header">
+      <div>
+          <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
+              <el-button type="warning" icon="el-icon-star-off" size="small" circle
+                         @click="newBookmark" ></el-button>
+          </el-tooltip>
+      </div>
+  </div>
+  <div class="items">
+      <BookmarkCard v-for="bookmark in items"
+                    :bookmark="bookmark" :key="bookmark.url"
+                    :active="bookmark.url==currentUrl"
+                    @linkClick="clickLink"
+                    @delete="deleteBookmark"
+                    @updated="updatedBookmark"
+      >
+      </BookmarkCard>
+  </div>-->
 </template>
 
 <script>
@@ -63,7 +77,12 @@
           id: 1,
           name: 'Default'
         }
-      ]
+      ],
+      bookmark: {
+        title: 'CSS trics and FlexBox',
+        url: 'https://github.com',
+        tags: ['500', 'new', 'cool feature']
+      }
     }),
     components: {
       BookmarkCard,
@@ -147,6 +166,42 @@
 </script>
 
 <style lang="scss">
+
+  body {
+    margin: 0px !important;
+  }
+
+  .popup {
+    width: 350px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    margin-bottom: 5px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    text-align: center;
+    font-size: 18px;
+    background-color: #717171;
+  }
+
+  .main {
+    padding: 7px;
+    flex: 1 0 0;
+  }
+
+  .footer {
+    background-color: #717171;
+    min-height: 10px;
+  }
+
   .listControls {
     display: flex;
     flex-direction: row;
@@ -160,21 +215,6 @@
   }
 
   .addBookmark {
-    display: flex;
-  }
-
-  .popup {
-    width: 350px;
-    min-height: 180px;
-    max-height: 500px;
-    overflow-y: auto;
-  }
-
-  .header {
-    margin-bottom: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   .checkBoxSubtitle {

@@ -1,12 +1,13 @@
 <template>
   <div>
     <div v-if="currentList && !creatingNew" class="ListSelector">
+      <span class="ListSelector-label">List: </span>
       <div class="ListSelector-dropDown">
         <el-dropdown  @command="onChange" trigger="click" size="mini">
-          <div class="ListSelector-dropDownLink">
-            <span>{{ currentList.name }}</span>
+          <div class="ListSelector-dropDown-selected">
+            <span>{{ currentList.name }}</span><i class="el-icon-arrow-down el-icon--right"></i>
           </div>
-          <el-dropdown-menu slot="dropdown" class="dropDown">
+          <el-dropdown-menu slot="dropdown" class="ListSelector-dropDown-items">
             <el-dropdown-item v-for="list in lists" :key="list.id" :command="list.id">{{ list.name }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -20,10 +21,29 @@
       </el-button>
     </div>
 
-    <div v-if="!lists || creatingNew" class="">
-      <el-input placeholder="Enter the new list title" v-model="inputName" size="mini"></el-input>
-      <el-button type="primary" size="mini" @click="onSave" :disabled="!inputName">Save</el-button>
-      <el-button type="default" size="mini" @click="onCacnel">Cancel</el-button>
+    <div v-if="!lists || creatingNew" class="ListEditor">
+      <el-input  class="ListEditor-input"
+                 placeholder="Enter the new list title"
+                 v-model="inputName"
+                 size="mini"
+                 maxlength="29"
+      >
+      </el-input>
+      <el-button class="ListEditor-button"
+                 type="primary"
+                 size="mini"
+                 @click="onSave"
+                 :disabled="!inputName"
+      >
+        Save
+      </el-button>
+      <el-button class="ListEditor-button"
+                 type="default"
+                 size="mini"
+                 @click="onCancel"
+      >
+        Cancel
+      </el-button>
     </div>
 
   </div>
@@ -84,6 +104,9 @@
         this.currentList = this.createNewList(this.inputName)
         this.inputName = ''
         this.$emit('created', this.currentList)
+      },
+      onCancel () {
+        this.creatingNew = false
       }
     }
   }
@@ -92,12 +115,15 @@
 <style scoped>
   .ListSelector {
     display: flex;
+    align-items: center;
+    margin-bottom: 5px;
   }
 
-  .ListSelector-dropDownLink {
-    cursor: pointer;
-    color: #409EFF;
+  .ListSelector-label {
+    font-size: 14px;
+    margin-right: 0.5em;
   }
+
   .el-icon-arrow-down {
     font-size: 12px;
   }
@@ -106,8 +132,29 @@
     flex: 1 0 0;
   }
 
-  .dropDown {
-    max-height: 80px;
-    overflow-y: auto;
+  .ListSelector-dropDown-selected {
+    cursor: pointer;
+    color: #409EFF;
   }
+
+  .ListSelector-dropDown-items {
+    max-height: 80px;
+    min-width: 100px;
+    overflow-y: auto;
+    margin-top: 3px;
+  }
+
+  .ListEditor {
+    display: flex;
+    margin-bottom: 5px;
+  }
+
+  .ListEditor-input {
+    flex: 1 0 0;
+  }
+
+  .ListEditor-button {
+    margin-left: 5px;
+  }
+
 </style>
