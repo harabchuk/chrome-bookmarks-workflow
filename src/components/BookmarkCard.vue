@@ -1,20 +1,27 @@
 <template>
-  <el-card v-if="bookmark" class="card" shadow="hover" :body-style="{padding: '0'}">
-      <div :class="['card-content', {active: active}]" v-if="!editing">
-        <a @click="onLinkClick(bookmark)" class="link" href="">{{ bookmark.title }}</a>
-        <i @click="onDeleteClick(bookmark)" class="el-icon-delete" title="Delete bookmark"></i>
-        <i @click="onEditClick(bookmark)" class="el-icon-edit" title="Edit bookmark title"></i>
+  <el-card v-if="bookmark" class="Card" shadow="hover" :body-style="{padding: '0'}">
+
+    <div :class="['card-content', {active: active}]" v-if="!editing" class="BookmarkView">
+      <div class="BookmarkView-content">
+        <a @click="onLinkClick(bookmark)" class="BookmarkView-link" href="">{{ bookmark.title }}</a>
+        <div class="BookmarkView-tags">
+          <span class="BookmarkView-tag" :key="tag" v-for="tag in bookmark.tags">{{ tag }}</span>
+        </div>
       </div>
-      <div class="card-content editing" v-if="editing">
-        <el-input
+      <i @click="onDeleteClick(bookmark)" class="BookmarkView-icon el-icon-delete" title="Delete bookmark"></i>
+      <i @click="onEditClick(bookmark)" class="BookmarkView-icon el-icon-edit" title="Edit bookmark title"></i>
+    </div>
+
+    <div class="BookmarkEdit editing" v-if="editing">
+      <el-input
           type="textarea"
           :rows="2"
           placeholder=""
           v-model="textareaTitle">
-        </el-input>
-        <i @click="onSaveClick()" class="el-icon-check" title="Save changes"></i>
-        <i @click="onCancelClick()" class="el-icon-close" title="Cancel changes"></i>
-      </div>
+      </el-input>
+      <i @click="onSaveClick()" class="el-icon-check" title="Save changes"></i>
+      <i @click="onCancelClick()" class="el-icon-close" title="Cancel changes"></i>
+    </div>
   </el-card>
 </template>
 
@@ -62,49 +69,80 @@
 </script>
 
 <style scoped>
-    .card {
-        margin-bottom: 5px;
-    }
-    .card-content {
-        display: flex;
-        justify-content: space-around;
-        align-items: stretch;
-        padding-right: 15px;
-    }
-    .link {
-        display: block;
-        width: 100%;
-        padding: 15px 5px 15px 15px;
-    }
-    .link,
-    .link:visited {
-        color: dodgerblue;
-        text-decoration: none;
-    }
-    .link:hover {
-        text-decoration: underline;
-    }
-    .card i{
-        margin-top: 15px;
-        margin-right: 3px;
-        cursor: pointer;
-        width: 15px;
-        display: block;
-        flex-grow: 0;
-    }
-    .card i:hover {
-        color: darkred;
-    }
-    .active .link{
-        font-weight: bold;
-    }
-    .el-icon-check {
-        color: green;
-    }
-    .el-icon-close {
-        color: darkred;
-    }
-    .editing textarea {
-        font-size: 9px !important;
-    }
+  .Card {
+    margin-bottom: 5px;
+  }
+
+  .Card i {
+    margin-top: 15px;
+    margin-right: 3px;
+    cursor: pointer;
+    width: 15px;
+    display: block;
+    flex-grow: 0;
+  }
+
+  .Card i:hover {
+    color: darkred;
+  }
+
+  .BookmarkView {
+    display: flex;
+  }
+
+  .BookmarkView-content {
+    flex: 1 0 0;
+    align-items: center;
+  }
+
+  .BookmarkView-link {
+    display: block;
+    width: 100%;
+    padding: 15px 5px 5px 15px;
+  }
+
+  .BookmarkView-link,
+  .BookmarkView-link:visited {
+    color: dodgerblue;
+    text-decoration: none;
+  }
+
+  .BookmarkView-link:hover {
+    text-decoration: underline;
+  }
+
+  .BookmarkView-tags {
+    padding: 0 5px 15px 15px;
+  }
+
+  .BookmarkView-tag {
+    color: grey;
+    margin-right: 1em;
+    font-size: 10px;
+  }
+
+  .active .BookmarkView-link {
+    font-weight: bold;
+  }
+
+  .BookmarkEdit {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    padding-right: 15px;
+  }
+
+  .el-icon-check {
+    color: green;
+  }
+
+  .el-icon-close {
+    color: darkred;
+  }
+
+  .editing textarea {
+    font-size: 9px !important;
+  }
+
+
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <div class="popup">
+  <div class="Popup">
 
-    <div class="header">
+    <div class="Popup-header">
       Bookmarks workflow
     </div>
 
-    <div class="main">
+    <div class="Popup-main">
 
-      <div class="listSelector">
+      <div class="ListSelectorContainer">
         <ListSelector
             :lists="lists"
             :selectedListId="1"
@@ -16,53 +16,47 @@
         ></ListSelector>
       </div>
 
-      <div v-if="lists">
-        <div v-if="currentUrl">
-          <AddBookmark
-              :title="currentTitle"
-              :url="currentUrl"
-              :bookmark="bookmark"
-              @saved="bookmarkCreated"
-          ></AddBookmark>
-        </div>
+      <div v-if="lists && currentUrl && !bookmark" class="AddBookmarkContainer">
+        <AddBookmark
+            :title="currentTitle"
+            :url="currentUrl"
+            @saved="bookmarkCreated"
+        ></AddBookmark>
+      </div>
 
-        <div class="bookmarks">
-          Bookmarks here
-        </div>
+      <div v-if="lists && bookmark" class="BookmarkDetailContainer">
+        <BookmarkDetail
+            :bookmark="bookmark"
+        ></BookmarkDetail>
+      </div>
+
+      <div v-if="lists && currentList" class="BookmarksContainer">
+        <div class="label">Bookmarks in this list</div>
+        <BookmarkCard
+            v-for="bookmark in items"
+            :bookmark="bookmark" :key="bookmark.url"
+            :active="bookmark.url==currentUrl"
+            @linkClick="clickLink"
+            @delete="deleteBookmark"
+            @updated="updatedBookmark"
+        >
+        </BookmarkCard>
       </div>
 
     </div> <!-- /main -->
 
-    <div class="footer"></div>
+    <div class="Popup-footer"></div>
   </div>
-  <!--<div class="header">
-      <div>
-          <el-tooltip class="item" effect="light" content="Add current page to the list" placement="bottom">
-              <el-button type="warning" icon="el-icon-star-off" size="small" circle
-                         @click="newBookmark" ></el-button>
-          </el-tooltip>
-      </div>
-  </div>
-  <div class="items">
-      <BookmarkCard v-for="bookmark in items"
-                    :bookmark="bookmark" :key="bookmark.url"
-                    :active="bookmark.url==currentUrl"
-                    @linkClick="clickLink"
-                    @delete="deleteBookmark"
-                    @updated="updatedBookmark"
-      >
-      </BookmarkCard>
-  </div>-->
 </template>
 
 <script>
-  import domain from '../utils/domain'
   import storage from '../api/storage'
   import bookmarks from '../api/bookmarks'
   import tabs from '../api/tabs'
   import BookmarkCard from '../components/BookmarkCard'
   import ListSelector from '../components/ListSelector'
   import AddBookmark from '../components/AddBookmark'
+  import BookmarkDetail from '../components/BookmarkDetail'
 
   export default {
     data: () => ({
@@ -78,33 +72,20 @@
           name: 'Default'
         }
       ],
-      bookmark: {
-        title: 'CSS trics and FlexBox',
-        url: 'https://github.com',
-        tags: ['500', 'new', 'cool feature']
-      }
+      bookmark: null,
+      currentList: 1
     }),
     components: {
       BookmarkCard,
       ListSelector,
-      AddBookmark
-    },
-    computed: {
-      subdomainsCurrentOption () {
-        return this.showAllSubdomains ? '*.' + this.currentTopDomain : this.currentSubdomain
-      }
+      AddBookmark,
+      BookmarkDetail
     },
     created () {
       tabs.currentTab().then(activeTab => {
         this.currentUrl = activeTab.url
         this.currentTitle = activeTab.title
-        this.currentTopDomain = domain.getDomain(activeTab.url, 2)
-        this.currentSubdomain = domain.getDomain(activeTab.url, 3)
-        this.showAllSubdomains = storage.get('show_subdomains_' + this.currentTopDomain)
-        const searchTerm = this.showAllSubdomains ? this.currentTopDomain : this.currentSubdomain
-        bookmarks.findBookmarks(searchTerm).then(items => {
-          this.items = items
-        })
+        storage.get('key')
       })
     },
     methods: {
@@ -121,7 +102,8 @@
         }
       },
       bookmarkCreated (bookmark) {
-
+        this.bookmark = bookmark
+        this.items.push(bookmark)
       },
       clickLink (bookmark) {
         const {url} = bookmark
@@ -137,13 +119,6 @@
       },
       updatedBookmark (bookmark) {
         bookmarks.updateBookmark(bookmark.id, bookmark.title)
-      },
-      changedDomainsOptions (showAllSubdomains) {
-        storage.set('show_subdomains_' + this.currentTopDomain, showAllSubdomains)
-        const searchTerm = showAllSubdomains ? this.currentTopDomain : this.currentSubdomain
-        bookmarks.findBookmarks(searchTerm).then(items => {
-          this.items = items
-        })
       },
       newBookmark () {
         tabs.currentTab().then(activeTab => {
@@ -171,7 +146,7 @@
     margin: 0px !important;
   }
 
-  .popup {
+  .Popup {
     width: 350px;
     min-height: 300px;
     max-height: 500px;
@@ -180,7 +155,7 @@
     flex-direction: column;
   }
 
-  .header {
+  .Popup-header {
     margin-bottom: 5px;
     color: white;
     display: flex;
@@ -192,14 +167,30 @@
     background-color: #717171;
   }
 
-  .main {
+  .Popup-main {
     padding: 7px;
     flex: 1 0 0;
   }
 
-  .footer {
+  .Popup-footer {
     background-color: #717171;
     min-height: 10px;
+  }
+
+  .ListSelectorContainer {
+
+  }
+
+  .AddBookmarkContainer {
+
+  }
+
+  .BookmarkDetailContainer {
+
+  }
+
+  .BookmarksContainer {
+    margin-top: 15px;
   }
 
   .listControls {
@@ -220,5 +211,9 @@
   .checkBoxSubtitle {
     font-size: 80%;
     margin-left: 24px;
+  }
+
+  .label {
+    font-size: 14px;
   }
 </style>

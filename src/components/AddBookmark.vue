@@ -1,28 +1,7 @@
 <template>
   <div>
-
-    <div v-if="!editing && !bookmark" class="AddBookmark">
+    <div v-if="!editing" class="AddBookmark">
       <el-button size="mini" @click="onAdd" type="primary">+ Bookmark</el-button>
-    </div>
-
-    <div v-if="!editing && bookmark" class="ExistingBookmark">
-      <el-card>
-        <div class="ExistingBookmark-title">
-          {{ bookmark.title }}
-        </div>
-        <div class="ExistingBookmark-tags">
-          <el-tag
-              :key="tag"
-              v-for="tag in bookmark.tags"
-              :disable-transitions="false"
-              size="mini"
-              class="ExistingBookmark-singleTag"
-          >
-            {{tag}}
-          </el-tag>
-        </div>
-      </el-card>
-
     </div>
 
     <div v-if="editing" class="EditBookmark">
@@ -63,11 +42,6 @@
         type: String,
         required: false,
         default: ''
-      },
-      bookmark: {
-        type: Object,
-        required: false,
-        default: null
       }
     },
     methods: {
@@ -119,19 +93,5 @@
 
   .EditBookmark-button {
     margin-left: 5px;
-  }
-
-  .ExistingBookmark {
-
-  }
-
-  .ExistingBookmark-title {
-    font-size: 14px;
-    margin-bottom: 0.5em;
-  }
-
-  .ExistingBookmark-singleTag {
-    margin-right: 10px;
-    margin-bottom: 5px;
   }
 </style>
