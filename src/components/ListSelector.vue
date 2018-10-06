@@ -61,11 +61,11 @@
     computed: {
       currentList () {
         if (this.lists && this.selectedListId) {
-          return = this.listById(this.selectedListId)
+          return this.listById(this.selectedListId)
         }
         return null
       }
-    }
+    },
     props: {
       selectedListId: {
         type: Number,
@@ -82,28 +82,22 @@
       listById (listId) {
         return this.lists.find(item => item.id === listId)
       },
-      createNewList (name) {
-        return {
-          name,
-          id: null
-        }
-      },
       onChange (listId) {
-        this.currentList = this.listById(listId)
-        this.$emit('changed', this.currentList)
+        this.$emit('changed', this.listById(listId))
       },
       onNew () {
         this.creatingNew = true
       },
       onDelete () {
-        this.$emit('deleted', this.currentList)
-        this.currentList = this.listById(1)
+        const list = this.currentList
+        if (list) {
+          this.$emit('deleted', list.id)
+        }
       },
       onSave () {
         this.creatingNew = false
-        this.currentList = this.createNewList(this.inputName)
+        this.$emit('created', this.inputName)
         this.inputName = ''
-        this.$emit('created', this.currentList)
       },
       onCancel () {
         this.creatingNew = false

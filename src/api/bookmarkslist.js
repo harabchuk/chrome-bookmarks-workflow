@@ -1,9 +1,11 @@
 import storage from './storage'
 
+const generateId = () => (new Date()).getTime()
+const listsKey = () => 'lists'
+const itemsKey = (listId) => `b_${listId}`
+const findBookmark = (items, url) => items.find(i => i.url === url)
+
 export default {
-  generateListId () {
-    return (new Date()).getTime()
-  },
   getListTemplate (title) {
     return {
       name: title,
@@ -11,27 +13,27 @@ export default {
     }
   },
   loadLists () {
-    const lists = storage.get('lists')
+    const lists = storage.get(listsKey())
     if (!lists) {
       return []
     }
     return lists
   },
   saveLists (lists) {
-    storage.set('lists', lists)
+    storage.set(listsKey(), lists)
   },
   loadItems (listId) {
-    const items = storage.get(`b_${listId}`)
+    const items = storage.get(itemsKey(listId))
     if (!items) {
       return []
     }
     return items
   },
   saveItems (listId, items) {
-    storage.set(`b_${listId}`, items)
+    storage.set(itemsKey(listId), items)
   },
   removeItems (listId) {
-    storage.remove(`b_${listId}`)
+    storage.remove(itemsKey(listId))
   },
   loadList (listId) {
     const lists = this.loadLists()
@@ -40,18 +42,27 @@ export default {
   saveList (list) {
     const listObj = list
     if (!listObj.id) {
-      listObj.id = this.generateListId()
+      listObj.id = generateId()
     }
     const lists = this.loadLists()
     lists.push(list)
     this.saveLists(lists)
   },
-  getBookmark (items, url) {
-    return items.find(i => i.url === url)
+  getBookmark (listId, url) {
+    return null
   },
   addBookmark (listId, bookmark) {
     const items = this.loadItems(listId)
-    items.push(bookmark)
+    if (!findBookmark(items, bookmark.url)) {
+      items.push(bookmark)
+      this.saveItems(listId, items)
+    }
+  },
+  saveBookmark (listId, bookmark) {
+    const items = this.loadItems(listId)
+    const existing = findBookmark(items, bookmark.url)
+    existing.title = bookmark.title
+    existing.tags = bookmark.tags
     this.saveItems(listId, items)
   },
   removeBookmark (listId, bookmark) {

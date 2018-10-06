@@ -79,37 +79,40 @@
         this.currentTitle = activeTab.title
         this.lists = bookmarkslist.loadLists()
         if (this.lists.length) {
-          this.currentListId = this.lists[0].id
-          this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
+          this.updateCurrentListId(this.lists[0].id)
         } else {
-          this.currentListId = 0
-          this.bookmark = null
+          this.updateCurrentListId(0)
         }
       })
     },
     methods: {
-      listChanged (list) {
-        this.currentListId = list.id
-        this.items = bookmarkslist.loadItems(this.currentListId)
-        this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
-      },
-      listCreated (list) {
-        const newList = bookmarkslist.getListTemplate(list.name)
-        bookmarkslist.saveList(newList)
-        this.lists = bookmarkslist.loadLists()
-        this.currentListId = newList.id
-        this.items = bookmarkslist.loadItems(this.currentListId)
-        this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
-      },
-      listDeleted (list) {
-        bookmarkslist.removeList(list.id)
-        this.lists = bookmarkslist.loadLists()
-        if (this.lists.length) {
-          this.currentListId = this.lists[0].id
-          this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
+      updateCurrentListId (listId) {
+        if (listId) {
+          this.currentListId = listId
+          this.items = bookmarkslist.loadItems(this.currentListId)
+          this.bookmark = this.items.find(i => i.url === this.currentUrl)
         } else {
           this.currentListId = 0
+          this.items = []
           this.bookmark = null
+        }
+      },
+      listChanged (list) {
+        this.updateCurrentListId(list.id)
+      },
+      listCreated (name) {
+        const newList = bookmarkslist.getListTemplate(name)
+        bookmarkslist.saveList(newList)
+        this.lists = bookmarkslist.loadLists()
+        this.updateCurrentListId(newList.id)
+      },
+      listDeleted (listId) {
+        bookmarkslist.removeList(listId)
+        this.lists = bookmarkslist.loadLists()
+        if (this.lists.length) {
+          this.updateCurrentListId(this.lists[0].id)
+        } else {
+          this.updateCurrentListId(0)
         }
       },
       bookmarkCreated (bookmark) {
@@ -127,11 +130,12 @@
       },
       deleteBookmark (bookmark) {
         bookmarkslist.removeBookmark(this.currentListId, bookmark)
-        this.items = bookmarkslist.loadItems(this.currentListId)
+        this.updateCurrentListId(this.currentListId)
       },
       updatedBookmark (bookmark) {
-        console.log('update')
-      },
+        bookmarkslist.saveBookmark(this.currentListId, bookmark)
+        this.updateCurrentListId(this.currentListId)
+      }
     }
   }
 </script>
