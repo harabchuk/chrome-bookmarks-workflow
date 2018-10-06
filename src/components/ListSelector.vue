@@ -21,7 +21,7 @@
       </el-button>
     </div>
 
-    <div v-if="!lists || creatingNew" class="ListEditor">
+    <div v-if="!lists.length || creatingNew" class="ListEditor">
       <el-input  class="ListEditor-input"
                  placeholder="Enter the new list title"
                  v-model="inputName"
@@ -55,17 +55,17 @@
     data () {
       return {
         creatingNew: false,
-        currentList: null,
         inputName: ''
       }
     },
-    created () {
-      if (this.lists && this.selectedListId) {
-        this.currentList = this.listById(this.selectedListId)
-      } else if (this.lists) {
-        this.currentList = this.lists[0]
+    computed: {
+      currentList () {
+        if (this.lists && this.selectedListId) {
+          return = this.listById(this.selectedListId)
+        }
+        return null
       }
-    },
+    }
     props: {
       selectedListId: {
         type: Number,
@@ -85,7 +85,7 @@
       createNewList (name) {
         return {
           name,
-          id: (new Date()).getTime()
+          id: null
         }
       },
       onChange (listId) {

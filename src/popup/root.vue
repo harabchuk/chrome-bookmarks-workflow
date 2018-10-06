@@ -10,13 +10,14 @@
       <div class="ListSelectorContainer">
         <ListSelector
             :lists="lists"
-            :selectedListId="1"
+            :selectedListId="currentListId"
+            @changed="listChanged"
             @created="listCreated"
             @deleted="listDeleted"
         ></ListSelector>
       </div>
 
-      <div v-if="lists && currentUrl && !bookmark" class="AddBookmarkContainer">
+      <div v-if="lists.length && currentUrl && !bookmark" class="AddBookmarkContainer">
         <AddBookmark
             :title="currentTitle"
             :url="currentUrl"
@@ -24,13 +25,13 @@
         ></AddBookmark>
       </div>
 
-      <div v-if="lists && bookmark" class="BookmarkDetailContainer">
+      <div v-if="lists.length && bookmark" class="BookmarkDetailContainer">
         <BookmarkDetail
             :bookmark="bookmark"
         ></BookmarkDetail>
       </div>
 
-      <div v-if="lists && currentList" class="BookmarksContainer">
+      <div v-if="lists.length && currentListId" class="BookmarksContainer">
         <div class="label">Bookmarks in this list</div>
         <BookmarkCard
             v-for="bookmark in items"
@@ -50,8 +51,7 @@
 </template>
 
 <script>
-  import storage from '../api/storage'
-  import bookmarks from '../api/bookmarks'
+  import bookmarkslist from '../api/bookmarkslist'
   import tabs from '../api/tabs'
   import BookmarkCard from '../components/BookmarkCard'
   import ListSelector from '../components/ListSelector'
@@ -60,20 +60,12 @@
 
   export default {
     data: () => ({
-      items: [],
       currentUrl: null,
       currentTitle: '',
-      showAllSubdomains: true,
-      currentTopDomain: null,
-      currentSubdomain: null,
-      lists: [
-        {
-          id: 1,
-          name: 'Default'
-        }
-      ],
+      lists: [],
+      items: [],
       bookmark: null,
-      currentList: 1
+      currentListId: 0
     }),
     components: {
       BookmarkCard,
@@ -85,25 +77,45 @@
       tabs.currentTab().then(activeTab => {
         this.currentUrl = activeTab.url
         this.currentTitle = activeTab.title
-        storage.get('key')
+        this.lists = bookmarkslist.loadLists()
+        if (this.lists.length) {
+          this.currentListId = this.lists[0].id
+          this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
+        } else {
+          this.currentListId = 0
+          this.bookmark = null
+        }
       })
     },
     methods: {
+      listChanged (list) {
+        this.currentListId = list.id
+        this.items = bookmarkslist.loadItems(this.currentListId)
+        this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
+      },
       listCreated (list) {
-        console.log(list)
-        this.lists.push(list)
+        const newList = bookmarkslist.getListTemplate(list.name)
+        bookmarkslist.saveList(newList)
+        this.lists = bookmarkslist.loadLists()
+        this.currentListId = newList.id
+        this.items = bookmarkslist.loadItems(this.currentListId)
+        this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
       },
       listDeleted (list) {
-        for (let i = 0; i < this.lists.length; i++) {
-          if (this.lists[i].id === list.id) {
-            this.lists.splice(i, 1)
-            return
-          }
+        bookmarkslist.removeList(list.id)
+        this.lists = bookmarkslist.loadLists()
+        if (this.lists.length) {
+          this.currentListId = this.lists[0].id
+          this.bookmark = bookmarkslist.getBookmark(this.items, this.currentUrl)
+        } else {
+          this.currentListId = 0
+          this.bookmark = null
         }
       },
       bookmarkCreated (bookmark) {
+        bookmarkslist.addBookmark(this.currentListId, bookmark)
         this.bookmark = bookmark
-        this.items.push(bookmark)
+        this.items = bookmarkslist.loadItems(this.currentListId)
       },
       clickLink (bookmark) {
         const {url} = bookmark
@@ -114,28 +126,12 @@
         })
       },
       deleteBookmark (bookmark) {
-        this.items = this.items.filter(b => b.id !== bookmark.id)
-        bookmarks.deleteBookmark(bookmark.id)
+        bookmarkslist.removeBookmark(this.currentListId, bookmark)
+        this.items = bookmarkslist.loadItems(this.currentListId)
       },
       updatedBookmark (bookmark) {
-        bookmarks.updateBookmark(bookmark.id, bookmark.title)
+        console.log('update')
       },
-      newBookmark () {
-        tabs.currentTab().then(activeTab => {
-          bookmarks.getOtherBookmarksFolder()
-            .then(folder => {
-              return bookmarks.getOrCreateFolder(folder.id, 'Domain Bookmarks')
-            })
-            .then(folder => {
-              return bookmarks.getOrCreateBookmark(folder.id, activeTab.url, activeTab.title)
-            })
-            .then(([b, created]) => {
-              if (created) {
-                this.items.push(b)
-              }
-            })
-        })
-      }
     }
   }
 </script>

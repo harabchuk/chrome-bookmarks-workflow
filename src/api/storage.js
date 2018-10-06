@@ -2,10 +2,12 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage}
  */
 export default {
-  get (key) {
+  get (key, defaultValue = null) {
     try {
       return JSON.parse(localStorage.getItem(key))
-    } catch (e) {}
+    } catch (e) {
+      return defaultValue
+    }
   },
   set (key, val) {
     try {
