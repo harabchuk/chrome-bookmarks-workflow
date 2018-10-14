@@ -7,6 +7,13 @@
     <div v-if="editing" class="EditBookmark">
       <span class="title">New bookmark</span>
       <el-input type="textarea" v-model="inputTitle" class="EditBookmark-input"></el-input>
+      <div class="EditBookmark-status">
+        <StatusSelector
+            :possibleStatuses="possibleStatuses"
+            :currentStatus="status"
+            @changed="onStatusChanged"
+        ></StatusSelector>
+      </div>
       <TagList :tags="tags" @created="onTagCreated" @deleted="onTagDeleted"></TagList>
       <div class="EditBookmark-actions">
         <el-button type="primary" size="mini" @click="onSave" class="EditBookmark-button">Save</el-button>
@@ -19,6 +26,7 @@
 
 <script>
   import TagList from './TagList'
+  import StatusSelector from './StatusSelector'
 
   export default {
     name: 'AddBookmark',
@@ -26,11 +34,13 @@
       return {
         tags: [],
         editing: false,
-        inputTitle: ''
+        inputTitle: '',
+        status: null
       }
     },
     components: {
-      TagList
+      TagList,
+      StatusSelector
     },
     props: {
       title: {
@@ -42,6 +52,9 @@
         type: String,
         required: false,
         default: ''
+      },
+      possibleStatuses: {
+        type: Array
       }
     },
     methods: {
@@ -50,7 +63,7 @@
           tags: this.tags,
           title: this.inputTitle,
           url: this.url,
-          status: null
+          status: this.status
         }
       },
       onTagCreated (newTag) {
@@ -62,6 +75,9 @@
       },
       onTagDeleted (tag) {
         this.tags.splice(this.tags.indexOf(tag), 1)
+      },
+      onStatusChanged (statusName) {
+        this.status = statusName
       },
       onAdd () {
         this.inputTitle = this.title
@@ -98,5 +114,9 @@
 
   .EditBookmark-button {
     margin-left: 5px;
+  }
+
+  .EditBookmark-status {
+    margin-bottom: 5px;
   }
 </style>

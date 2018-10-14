@@ -21,6 +21,7 @@
         <AddBookmark
             :title="currentTitle"
             :url="currentUrl"
+            :possibleStatuses="possibleStatuses"
             @saved="bookmarkCreated"
         ></AddBookmark>
       </div>

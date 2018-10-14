@@ -16,28 +16,23 @@
         </el-tag>
       </div>
       <div class="ExistingBookmark-status">
-        <el-dropdown  @command="onStatusChange" trigger="click" size="mini">
-          <div class="ExistingBookmark-status-dropDown">
-            <span>{{ currentStatus }}</span><i class="el-icon-arrow-down el-icon--right"></i>
-          </div>
-          <el-dropdown-menu slot="dropdown" class="ExistingBookmark-status-dropDown-items">
-            <el-dropdown-item
-                v-for="status in possibleStatuses"
-                :key="status.name"
-                :command="status.name"
-            >
-              {{ status.name }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <StatusSelector
+            :possibleStatuses="possibleStatuses"
+            :currentStatus="bookmark.status"
+            @changed="onStatusChange"
+        ></StatusSelector>
       </div>
     </el-card>
   </div>
 </template>
 
 <script>
+  import StatusSelector from './StatusSelector'
   export default {
     name: 'BookmarkDetail',
+    components: {
+      StatusSelector
+    },
     props: {
       bookmark: {
         type: Object
