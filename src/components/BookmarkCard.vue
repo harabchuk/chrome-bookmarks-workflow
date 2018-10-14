@@ -1,13 +1,18 @@
 <template>
   <el-card v-if="bookmark" class="Card" shadow="hover" :body-style="{padding: '0'}">
 
-    <div :class="['card-content', {active: active}]" v-if="!editing" class="BookmarkView">
+    <div
+        v-if="!editing"
+        :class="['card-content', {active: active}]"
+        class="BookmarkView"
+        :style="{'border-left-color': statusColor }"
+    >
       <div class="BookmarkView-content">
         <a @click="onLinkClick(bookmark)" class="BookmarkView-link" href="">{{ bookmark.title }}</a>
         <div class="BookmarkView-tags" v-if="bookmark.tags.length">
           <span class="BookmarkView-tag" :key="tag" v-for="tag in bookmark.tags">{{ tag }}</span>
         </div>
-        <div class="BookmarkView-status">
+        <div class="BookmarkView-status" :style="{'background-color': statusColor }">
           {{ bookmark.status }}
         </div>
       </div>
@@ -43,6 +48,24 @@
         type: Boolean,
         required: false,
         default: true
+      },
+      possibleStatuses: {
+        type: Array,
+        required: false,
+        default: []
+      }
+    },
+    computed: {
+      statusColor () {
+        const noColor = 'transparent'
+        if (!this.bookmark.status) {
+          return noColor
+        }
+        const foundStatus = this.possibleStatuses.find(i => i.name === this.bookmark.status)
+        if (!foundStatus) {
+          return noColor
+        }
+        return foundStatus.color
       }
     },
     methods: {
@@ -91,6 +114,8 @@
 
   .BookmarkView {
     display: flex;
+    border-left: solid 3px transparent;
+    border-left-color: red;
   }
 
   .BookmarkView-content {
@@ -106,11 +131,12 @@
 
   .BookmarkView-link,
   .BookmarkView-link:visited {
-    color: dodgerblue;
+    color: #333;
     text-decoration: none;
   }
 
   .BookmarkView-link:hover {
+    color: dodgerblue;
     text-decoration: underline;
   }
 
@@ -125,10 +151,12 @@
   }
 
   .BookmarkView-status {
-    padding: 0 5px 15px 15px;
+    padding: 1px 2px 1px 2px;
     font-size: 10px;
-    color: grey;
+    color: white;
     font-weight: bold;
+    display: inline-block;
+    margin: 0 5px 15px 15px;
   }
 
   .active .BookmarkView-link {

@@ -36,12 +36,31 @@
       </div>
 
       <div v-if="lists.length && currentListId" class="BookmarksContainer">
-        <div class="Popup-sectionTitle">Bookmarks in this list</div>
+        <div class="BookmarksContainer-title">
+          <span class="Popup-sectionTitle">Bookmarks in this list</span>
+          <el-select
+            v-model="statusFilter"
+            multiple
+            collapse-tags
+            placeholder="Filter"
+            size="mini"
+            @change="statusFilterChanged"
+            class="BookmarksContainer-filter"
+          >
+            <el-option
+              v-for="status in possibleStatuses"
+              :key="status.name"
+              :label="status.name"
+              :value="status.name">
+            </el-option>
+          </el-select>
+        </div>
         <div v-if="!items.length">No bookmarks yet.</div>
         <BookmarkCard
-            v-for="bookmark in items"
+            v-for="bookmark in filteredBookmarks"
             :bookmark="bookmark" :key="bookmark.url"
             :active="bookmark.url==currentUrl"
+            :possibleStatuses="possibleStatuses"
             @linkClick="clickLink"
             @delete="deleteBookmark"
             @updated="updatedBookmark"
@@ -72,10 +91,11 @@
       bookmark: null,
       currentListId: 0,
       possibleStatuses: [
-        {name: 'Hot', color: '#333'},
-        {name: 'Warm', color: '#533'},
-        {name: 'Cold', color: '#553'}
-      ]
+        {name: 'Hot', color: '#FF8000'},
+        {name: 'Warm', color: '#63C94F'},
+        {name: 'Cold', color: '#70A2FF'}
+      ],
+      statusFilter: []
     }),
     components: {
       BookmarkCard,
@@ -95,6 +115,14 @@
           this.updateCurrentListId(0)
         }
       })
+    },
+    computed: {
+      filteredBookmarks () {
+        if (!this.statusFilter.length) {
+          return this.items
+        }
+        return this.items.filter((i) => this.statusFilter.includes(i.status))
+      }
     },
     methods: {
       updateCurrentListId (listId) {
@@ -214,6 +242,16 @@
 
   .BookmarksContainer {
     margin-top: 15px;
+  }
+
+  .BookmarksContainer-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+
+  .BookmarksContainer-filter {
+    width: 140px;
   }
 
   .listControls {
