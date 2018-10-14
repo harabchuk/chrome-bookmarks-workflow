@@ -4,8 +4,11 @@
     <div :class="['card-content', {active: active}]" v-if="!editing" class="BookmarkView">
       <div class="BookmarkView-content">
         <a @click="onLinkClick(bookmark)" class="BookmarkView-link" href="">{{ bookmark.title }}</a>
-        <div class="BookmarkView-tags">
+        <div class="BookmarkView-tags" v-if="bookmark.tags.length">
           <span class="BookmarkView-tag" :key="tag" v-for="tag in bookmark.tags">{{ tag }}</span>
+        </div>
+        <div class="BookmarkView-status">
+          {{ bookmark.status }}
         </div>
       </div>
       <i @click="onDeleteClick(bookmark)" class="BookmarkView-icon el-icon-delete" title="Delete bookmark"></i>
@@ -112,13 +115,20 @@
   }
 
   .BookmarkView-tags {
-    padding: 0 5px 15px 15px;
+    padding: 0 5px 5px 15px;
   }
 
   .BookmarkView-tag {
     color: grey;
     margin-right: 1em;
     font-size: 10px;
+  }
+
+  .BookmarkView-status {
+    padding: 0 5px 15px 15px;
+    font-size: 10px;
+    color: grey;
+    font-weight: bold;
   }
 
   .active .BookmarkView-link {

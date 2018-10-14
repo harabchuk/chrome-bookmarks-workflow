@@ -3,6 +3,7 @@ import storage from './storage'
 const generateId = () => (new Date()).getTime()
 const listsKey = () => 'lists'
 const itemsKey = (listId) => `b_${listId}`
+const lastIdKey = () => 'last_list_id'
 const findBookmark = (items, url) => items.find(i => i.url === url)
 
 export default {
@@ -63,6 +64,7 @@ export default {
     const existing = findBookmark(items, bookmark.url)
     existing.title = bookmark.title
     existing.tags = bookmark.tags
+    existing.status = bookmark.status
     this.saveItems(listId, items)
   },
   removeBookmark (listId, bookmark) {
@@ -85,5 +87,11 @@ export default {
     }
     this.saveLists(lists)
     this.removeItems(listId)
+  },
+  getLastListId () {
+    return storage.get(lastIdKey())
+  },
+  setLastListId (listId) {
+    storage.set(lastIdKey(), listId)
   }
 }

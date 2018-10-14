@@ -26,13 +26,17 @@
       </div>
 
       <div v-if="lists.length && bookmark" class="BookmarkDetailContainer">
+        <div class="Popup-sectionTitle">Current page</div>
         <BookmarkDetail
             :bookmark="bookmark"
+            :possibleStatuses="possibleStatuses"
+            @statusChanged="bookmarkStatusChanged"
         ></BookmarkDetail>
       </div>
 
       <div v-if="lists.length && currentListId" class="BookmarksContainer">
-        <div class="label">Bookmarks in this list</div>
+        <div class="Popup-sectionTitle">Bookmarks in this list</div>
+        <div v-if="!items.length">No bookmarks yet.</div>
         <BookmarkCard
             v-for="bookmark in items"
             :bookmark="bookmark" :key="bookmark.url"
@@ -65,7 +69,12 @@
       lists: [],
       items: [],
       bookmark: null,
-      currentListId: 0
+      currentListId: 0,
+      possibleStatuses: [
+        {name: 'Hot', color: '#333'},
+        {name: 'Warm', color: '#533'},
+        {name: 'Cold', color: '#553'}
+      ]
     }),
     components: {
       BookmarkCard,
@@ -74,12 +83,13 @@
       BookmarkDetail
     },
     created () {
+      this.currentListId = bookmarkslist.getLastListId()
       tabs.currentTab().then(activeTab => {
         this.currentUrl = activeTab.url
         this.currentTitle = activeTab.title
         this.lists = bookmarkslist.loadLists()
         if (this.lists.length) {
-          this.updateCurrentListId(this.lists[0].id)
+          this.updateCurrentListId(this.currentListId)
         } else {
           this.updateCurrentListId(0)
         }
@@ -88,6 +98,7 @@
     methods: {
       updateCurrentListId (listId) {
         if (listId) {
+          bookmarkslist.setLastListId(listId)
           this.currentListId = listId
           this.items = bookmarkslist.loadItems(this.currentListId)
           this.bookmark = this.items.find(i => i.url === this.currentUrl)
@@ -107,13 +118,17 @@
         this.updateCurrentListId(newList.id)
       },
       listDeleted (listId) {
-        bookmarkslist.removeList(listId)
-        this.lists = bookmarkslist.loadLists()
-        if (this.lists.length) {
-          this.updateCurrentListId(this.lists[0].id)
-        } else {
-          this.updateCurrentListId(0)
-        }
+        this.$confirm('Delete this list and all bookmarks in it?')
+          .then(_ => {
+            bookmarkslist.removeList(listId)
+            this.lists = bookmarkslist.loadLists()
+            if (this.lists.length) {
+              this.updateCurrentListId(this.lists[0].id)
+            } else {
+              this.updateCurrentListId(0)
+            }
+          })
+          .catch(_ => {})
       },
       bookmarkCreated (bookmark) {
         bookmarkslist.addBookmark(this.currentListId, bookmark)
@@ -135,6 +150,12 @@
       updatedBookmark (bookmark) {
         bookmarkslist.saveBookmark(this.currentListId, bookmark)
         this.updateCurrentListId(this.currentListId)
+      },
+      bookmarkStatusChanged (name) {
+        console.log(name)
+        this.bookmark.status = name
+        bookmarkslist.saveBookmark(this.currentListId, this.bookmark)
+        this.updateCurrentListId(this.currentListId)
       }
     }
   }
@@ -144,6 +165,7 @@
 
   body {
     margin: 0px !important;
+    color: #333;
   }
 
   .Popup {
@@ -213,7 +235,12 @@
     margin-left: 24px;
   }
 
-  .label {
-    font-size: 14px;
+  .Popup-sectionTitle {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .el-message-box {
+    width: 99% !important;
   }
 </style>

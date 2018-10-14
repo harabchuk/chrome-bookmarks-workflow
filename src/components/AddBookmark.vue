@@ -49,10 +49,15 @@
         return {
           tags: this.tags,
           title: this.inputTitle,
-          url: this.url
+          url: this.url,
+          status: null
         }
       },
       onTagCreated (newTag) {
+        const normalizedTag = newTag.trim()
+        if (!normalizedTag.length || this.tags.indexOf(normalizedTag) > -1) {
+          return
+        }
         this.tags.push(newTag)
       },
       onTagDeleted (tag) {
