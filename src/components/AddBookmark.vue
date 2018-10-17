@@ -66,6 +66,13 @@
           status: this.status
         }
       },
+      getDefaultStatusName () {
+        const defaultStatus = this.possibleStatuses.find(i => i.default === true)
+        if (defaultStatus) {
+          return defaultStatus.name
+        }
+        return null
+      },
       onTagCreated (newTag) {
         const normalizedTag = newTag.trim()
         if (!normalizedTag.length || this.tags.indexOf(normalizedTag) > -1) {
@@ -81,6 +88,7 @@
       },
       onAdd () {
         this.inputTitle = this.title
+        this.status = this.getDefaultStatusName()
         this.editing = true
       },
       onCancel () {

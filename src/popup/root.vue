@@ -39,12 +39,12 @@
         <div class="BookmarksContainer-title">
           <span class="Popup-sectionTitle">Bookmarks in this list</span>
           <el-select
+            v-if="items.length"
             v-model="statusFilter"
             multiple
             collapse-tags
             placeholder="Filter"
             size="mini"
-            @change="statusFilterChanged"
             class="BookmarksContainer-filter"
           >
             <el-option
@@ -91,9 +91,9 @@
       bookmark: null,
       currentListId: 0,
       possibleStatuses: [
-        {name: 'Hot', color: '#FF8000'},
-        {name: 'Warm', color: '#63C94F'},
-        {name: 'Cold', color: '#70A2FF'}
+        {name: 'Hot', color: '#FF8000', default: false},
+        {name: 'Warm', color: '#63C94F', default: true},
+        {name: 'Cold', color: '#70A2FF', default: false}
       ],
       statusFilter: []
     }),
@@ -181,7 +181,6 @@
         this.updateCurrentListId(this.currentListId)
       },
       bookmarkStatusChanged (name) {
-        console.log(name)
         this.bookmark.status = name
         bookmarkslist.saveBookmark(this.currentListId, this.bookmark)
         this.updateCurrentListId(this.currentListId)
