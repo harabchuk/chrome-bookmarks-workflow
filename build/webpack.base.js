@@ -12,6 +12,7 @@ let resolve = (dir) => path.join(rootDir, 'src', dir)
 module.exports = {
   entry: {
     popup: resolve('./popup'),
+    background: resolve('./background'),
   },
   output: {
     path: path.join(rootDir, 'dist'),

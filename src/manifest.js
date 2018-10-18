@@ -18,6 +18,10 @@ module.exports = {
     'storage',
     'bookmarks'
   ],
+  background: {
+    persistent: false,
+    page: 'pages/background.html'
+  },
   browser_action: {
     default_title: 'Bookmarks Workflow',
     default_popup: 'pages/popup.html'
@@ -25,9 +29,12 @@ module.exports = {
   content_scripts: [
     {
       matches: ['*://*/*'],
-      js: ['js/bm_content.js']
+      js: ['js/content.js']
     }
   ],
   manifest_version: 2,
   content_security_policy: "script-src 'self'; object-src 'self'",
+  web_accessible_resources: [
+    'js/content.js'
+  ],
 }
