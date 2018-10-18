@@ -19,9 +19,15 @@ module.exports = {
     'bookmarks'
   ],
   browser_action: {
-    default_title: 'App Bookmarks',
+    default_title: 'Bookmarks Workflow',
     default_popup: 'pages/popup.html'
   },
+  content_scripts: [
+    {
+      matches: ['*://*/*'],
+      js: ['js/bm_content.js']
+    }
+  ],
   manifest_version: 2,
   content_security_policy: "script-src 'self'; object-src 'self'",
 }
