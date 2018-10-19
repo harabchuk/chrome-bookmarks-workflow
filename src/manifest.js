@@ -29,12 +29,14 @@ module.exports = {
   content_scripts: [
     {
       matches: ['*://*/*'],
-      js: ['js/content.js']
+      js: ['js/content.js'],
+      css: ['js/content.css']
     }
   ],
   manifest_version: 2,
   content_security_policy: "script-src 'self'; object-src 'self'",
   web_accessible_resources: [
-    'js/content.js'
+    'js/content.js',
+    'js/content.css'
   ],
 }
