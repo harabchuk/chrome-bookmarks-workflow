@@ -50,7 +50,11 @@ export default {
     this.saveLists(lists)
   },
   getBookmark (listId, url) {
-    return null
+    const items = this.loadItems(listId)
+    if (!items) {
+      return null
+    }
+    return findBookmark(items, url)
   },
   addBookmark (listId, bookmark) {
     const items = this.loadItems(listId)

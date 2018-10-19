@@ -149,6 +149,7 @@
       listDeleted (listId) {
         this.$confirm('Delete this list and all bookmarks in it?')
           .then(_ => {
+            bookmarkslist.loadItems(listId).forEach(this.notifyTabBookmarkDeleted)
             bookmarkslist.removeList(listId)
             this.lists = bookmarkslist.loadLists()
             if (this.lists.length) {
@@ -163,6 +164,7 @@
         bookmarkslist.addBookmark(this.currentListId, bookmark)
         this.bookmark = bookmark
         this.items = bookmarkslist.loadItems(this.currentListId)
+        this.notifyTabBookmarkUpdated(bookmark)
       },
       clickLink (bookmark) {
         const {url} = bookmark
@@ -175,15 +177,24 @@
       deleteBookmark (bookmark) {
         bookmarkslist.removeBookmark(this.currentListId, bookmark)
         this.updateCurrentListId(this.currentListId)
+        this.notifyTabBookmarkDeleted(bookmark)
       },
       updatedBookmark (bookmark) {
         bookmarkslist.saveBookmark(this.currentListId, bookmark)
         this.updateCurrentListId(this.currentListId)
+        this.notifyTabBookmarkUpdated(bookmark)
       },
       bookmarkStatusChanged (name) {
         this.bookmark.status = name
         bookmarkslist.saveBookmark(this.currentListId, this.bookmark)
         this.updateCurrentListId(this.currentListId)
+        this.notifyTabBookmarkUpdated(this.bookmark)
+      },
+      notifyTabBookmarkUpdated (bookmark) {
+        tabs.sendMessageByUrl(bookmark.url, { type: 'bookmark_updated', bookmark })
+      },
+      notifyTabBookmarkDeleted (bookmark) {
+        tabs.sendMessageByUrl(bookmark.url, { type: 'bookmark_deleted', bookmark })
       }
     }
   }

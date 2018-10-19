@@ -1,13 +1,16 @@
 import bookmarkslist from '../api/bookmarkslist'
 
-console.log('background!')
+function getBookmark (url) {
+  const currentListId = bookmarkslist.getLastListId()
+  return bookmarkslist.getBookmark(currentListId, url)
+}
 
-const currentListId = bookmarkslist.getLastListId()
-const lists = bookmarkslist.loadLists()
+function initListeners () {
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.type === 'content_init') {
+      sendResponse(getBookmark(sender.tab.url))
+    }
+  })
+}
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  console.log(msg, sender.tab, sender.frameId)
-  sendResponse('Gotcha!')
-})
-
-console.log(currentListId, lists, 1)
+initListeners()
