@@ -191,10 +191,17 @@
         this.notifyTabBookmarkUpdated(this.bookmark)
       },
       notifyTabBookmarkUpdated (bookmark) {
-        tabs.sendMessageByUrl(bookmark.url, { type: 'bookmark_updated', bookmark })
+        tabs.sendMessageByUrl(bookmark.url, {
+          type: 'bookmark_updated',
+          possibleStatuses: this.possibleStatuses,
+          bookmark
+        })
       },
       notifyTabBookmarkDeleted (bookmark) {
-        tabs.sendMessageByUrl(bookmark.url, { type: 'bookmark_deleted', bookmark })
+        tabs.sendMessageByUrl(bookmark.url, {
+          type: 'bookmark_deleted',
+          bookmark
+        })
       }
     }
   }
