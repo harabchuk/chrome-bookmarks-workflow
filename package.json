@@ -1,7 +1,7 @@
 {
-  "name": "context-bookmarks",
+  "name": "bookmarks-workflow",
   "version": "1.0.0",
-  "description": "Context Bookmarks for websites",
+  "description": "Bookmarks Workflow",
   "author": "Aliaksei Harabchuk <aliaksei.harabchuk@gmail.com>",
   "license": "MIT",
   "private": false,
@@ -10,7 +10,9 @@
     "lodash": "^4.17.4",
     "url-parse": "^1.4.3",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1",
+    "xstate": "^3.3.3"
   },
   "scripts": {
     "lint": "eslint --ext .js,.vue src",

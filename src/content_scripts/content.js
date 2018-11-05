@@ -18,6 +18,7 @@ function updateBookmark (msg) {
   if (!msg.bookmark) {
     return;
   }
+  clearBookmark();
   var statusColor = getStatusColor(msg.possibleStatuses, msg.bookmark.status);
   window.document.body.insertAdjacentHTML(
     'beforeend',
@@ -27,7 +28,7 @@ function updateBookmark (msg) {
     '</div>');
 }
 
-function clearBookmark (msg) {
+function clearBookmark () {
   var tab = window.document.getElementById('BookmarksWorkflowTab');
   if (tab) {
     window.document.body.removeChild(tab);
@@ -39,7 +40,7 @@ function initListeners () {
     if (msg.type === 'bookmark_updated') {
       updateBookmark(msg);
     } else if (msg.type === 'bookmark_deleted') {
-      clearBookmark(msg);
+      clearBookmark();
     }
   })
 }

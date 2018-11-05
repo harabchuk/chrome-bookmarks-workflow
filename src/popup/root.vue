@@ -7,6 +7,8 @@
 
     <div class="Popup-main">
 
+      <router-view></router-view>
+
       <div class="ListSelectorContainer">
         <ListSelector
             :lists="lists"
