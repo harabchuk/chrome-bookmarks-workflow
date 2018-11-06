@@ -14,7 +14,6 @@
             :lists="lists"
             :selectedListId="currentListId"
             @changed="listChanged"
-            @created="listCreated"
             @deleted="listDeleted"
         ></ListSelector>
       </div>
@@ -77,6 +76,7 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex'
   import bookmarkslist from '../api/bookmarkslist'
   import tabs from '../api/tabs'
   import BookmarkCard from '../components/BookmarkCard'
@@ -106,6 +106,11 @@
       BookmarkDetail
     },
     created () {
+      this.loadLists()
+      tabs.currentTab().then(activeTab => {
+        this.setUrlTitle(activeTab.url, activeTab.title)
+      })
+
       this.currentListId = bookmarkslist.getLastListId()
       tabs.currentTab().then(activeTab => {
         this.currentUrl = activeTab.url
@@ -127,6 +132,10 @@
       }
     },
     methods: {
+      ...mapActions('bookmarks', [
+        'setUrlTitle',
+        'loadLists'
+      ]),
       updateCurrentListId (listId) {
         if (listId) {
           bookmarkslist.setLastListId(listId)

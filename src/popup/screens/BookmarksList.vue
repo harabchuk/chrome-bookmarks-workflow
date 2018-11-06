@@ -5,7 +5,7 @@
           :lists="lists"
           :selectedListId="currentListId"
           @changed="listChanged"
-          @created="listCreated"
+          @new="listNew"
           @deleted="listDeleted"
       ></ListSelector>
     </div>
@@ -14,19 +14,12 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
-  import tabs from '../../api/tabs'
   import ListSelector from '../../components/ListSelector'
 
   export default {
     name: 'BookmarksList',
     components: {
       ListSelector
-    },
-    created () {
-      this.loadLists()
-      tabs.currentTab().then(activeTab => {
-        this.setUrlTitle(activeTab.url, activeTab.title)
-      })
     },
     computed: {
       ...mapState('bookmarks', {
@@ -37,15 +30,16 @@
     },
     methods: {
       ...mapActions('bookmarks', [
-        'setUrlTitle',
-        'setCurrentListId',
-        'loadLists'
+        'setCurrentListId'
       ]),
       onNew () {
         this.$xtransition('NEW_BOOKMARK')
       },
       onEdit () {
         this.$xtransition('EDIT_BOOKMARK', { bookmark_id: 2 })
+      },
+      listNew () {
+        this.$xtransition('NEW_LIST')
       },
       listChanged (list) {
         this.setCurrentListId(list.id)

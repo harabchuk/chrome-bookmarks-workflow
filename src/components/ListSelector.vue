@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div v-if="currentList && !creatingNew" class="ListSelector">
+  <div v-if="currentList">
+    <div class="ListSelector">
       <span class="ListSelector-label">List: </span>
       <div class="ListSelector-dropDown">
         <el-dropdown  @command="onChange" trigger="click" size="mini">
@@ -13,36 +13,11 @@
         </el-dropdown>
       </div>
 
-      <el-button type="text" size="mini" @click="onNew(currentList)">
+      <el-button type="text" size="mini" @click="onNew">
         New list
       </el-button>
       <el-button type="text" size="mini" @click="onDelete(currentList)" :disabled="this.currentList.id === 1">
         Delete list
-      </el-button>
-    </div>
-
-    <div v-if="!lists.length || creatingNew" class="ListEditor">
-      <el-input  class="ListEditor-input"
-                 placeholder="Enter the new list title"
-                 v-model="inputName"
-                 size="mini"
-                 maxlength="29"
-      >
-      </el-input>
-      <el-button class="ListEditor-button"
-                 type="primary"
-                 size="mini"
-                 @click="onSave"
-                 :disabled="!inputName"
-      >
-        Save
-      </el-button>
-      <el-button class="ListEditor-button"
-                 type="default"
-                 size="mini"
-                 @click="onCancel"
-      >
-        Cancel
       </el-button>
     </div>
 
@@ -54,8 +29,6 @@
     name: 'ListSelector',
     data () {
       return {
-        creatingNew: false,
-        inputName: ''
       }
     },
     computed: {
@@ -86,21 +59,14 @@
         this.$emit('changed', this.listById(listId))
       },
       onNew () {
-        this.creatingNew = true
+        console.log('list selector new')
+        this.$emit('new')
       },
       onDelete () {
         const list = this.currentList
         if (list) {
           this.$emit('deleted', list.id)
         }
-      },
-      onSave () {
-        this.creatingNew = false
-        this.$emit('created', this.inputName)
-        this.inputName = ''
-      },
-      onCancel () {
-        this.creatingNew = false
       }
     }
   }
@@ -136,19 +102,6 @@
     min-width: 100px;
     overflow-y: auto;
     margin-top: 3px;
-  }
-
-  .ListEditor {
-    display: flex;
-    margin-bottom: 5px;
-  }
-
-  .ListEditor-input {
-    flex: 1 0 0;
-  }
-
-  .ListEditor-button {
-    margin-left: 5px;
   }
 
 </style>

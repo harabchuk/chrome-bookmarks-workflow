@@ -9,6 +9,7 @@ import XRouter from '../libs/xrouter'
 import states from './screens_states'
 import BookmarksList from '../popup/screens/BookmarksList'
 import EditBookmark from '../popup/screens/EditBookmark'
+import EditList from '../popup/screens/EditList'
 
 Vue.config.productionTip = false
 
@@ -16,7 +17,8 @@ const router = new VueRouter({
   mode: 'abstract',
   routes: [
     {path: '/BookmarksList', component: BookmarksList},
-    {path: '/EditBookmark', component: EditBookmark}
+    {path: '/EditBookmark', component: EditBookmark},
+    {path: '/EditList', component: EditList}
   ]
 })
 

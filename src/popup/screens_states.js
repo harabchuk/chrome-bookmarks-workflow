@@ -12,11 +12,13 @@ export default {
     EditBookmark: {
       on: {
         BOOKMARK_SAVED: 'BookmarksList',
-        BOOKMARK_CANCEL: 'BookmarksList'
+        CANCEL: 'BookmarksList'
       }
     },
     EditList: {
-
+      on: {
+        CANCEL: 'BookmarksList'
+      }
     }
   }
 }
