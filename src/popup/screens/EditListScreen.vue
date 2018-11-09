@@ -13,7 +13,7 @@
   import ListEdit from '../../components/ListEdit'
 
   export default {
-    name: 'EditList',
+    name: 'EditListScreen',
     props: {},
     components: {
       ListEdit

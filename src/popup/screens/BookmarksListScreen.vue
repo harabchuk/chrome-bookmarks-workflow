@@ -9,23 +9,31 @@
           @deleted="listDeleted"
       ></ListSelector>
     </div>
+
+    <div v-if="lists.length && currentUrl" class="AddBookmarkContainer">
+      <AddBookmark @clicked="onNew"></AddBookmark>
+    </div>
+
   </div>
 </template>
 
 <script>
   import { mapState, mapActions } from 'vuex'
   import ListSelector from '../../components/ListSelector'
+  import AddBookmark from '../../components/AddBookmark'
 
   export default {
-    name: 'BookmarksList',
+    name: 'BookmarksListScreen',
     components: {
-      ListSelector
+      ListSelector,
+      AddBookmark
     },
     computed: {
       ...mapState('bookmarks', [
         'items',
         'lists',
-        'currentListId'
+        'currentListId',
+        'currentUrl'
       ])
     },
     methods: {

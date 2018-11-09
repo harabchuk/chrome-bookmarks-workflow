@@ -1,14 +1,17 @@
 <template>
-  <div>{{ title }} Bookmark</div>
+  <div>Bookmark</div>
 </template>
 
 <script>
   export default {
-    name: 'EditBookmark',
+    name: 'EditBookmarkScreen',
     props: {},
+    mounted () {
+      console.log('New bookmark', this.bookmarkId)
+    },
     computed: {
-      title () {
-        return this.$xrouter.eventArgs['bookmark_id'] ? 'Edit' : 'New'
+      bookmarkId () {
+        return this.$xrouter.eventArgs['bookmark_id']
       }
     }
   }

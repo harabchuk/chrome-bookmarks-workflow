@@ -9,15 +9,6 @@
 
       <router-view></router-view>
 
-      <div v-if="lists.length && currentUrl && !bookmark" class="AddBookmarkContainer">
-        <AddBookmark
-            :title="currentTitle"
-            :url="currentUrl"
-            :possibleStatuses="possibleStatuses"
-            @saved="bookmarkCreated"
-        ></AddBookmark>
-      </div>
-
       <div v-if="lists.length && bookmark" class="BookmarkDetailContainer">
         <div class="Popup-sectionTitle">Current page</div>
         <BookmarkDetail
