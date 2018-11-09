@@ -59,7 +59,6 @@
         this.$emit('changed', this.listById(listId))
       },
       onNew () {
-        console.log('list selector new')
         this.$emit('new')
       },
       onDelete () {

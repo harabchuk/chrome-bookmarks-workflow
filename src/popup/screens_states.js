@@ -17,7 +17,8 @@ export default {
     },
     EditList: {
       on: {
-        CANCEL: 'BookmarksList'
+        CANCEL: 'BookmarksList',
+        SAVE: 'BookmarksList'
       }
     }
   }

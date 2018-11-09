@@ -22,11 +22,11 @@
       ListSelector
     },
     computed: {
-      ...mapState('bookmarks', {
-        items: state => state.items,
-        lists: state => state.lists,
-        currentListId: state => state.currentListId
-      })
+      ...mapState('bookmarks', [
+        'items',
+        'lists',
+        'currentListId'
+      ])
     },
     methods: {
       ...mapActions('bookmarks', [
@@ -43,12 +43,6 @@
       },
       listChanged (list) {
         this.setCurrentListId(list.id)
-      },
-      listCreated (name) {
-        // const newList = bookmarkslist.getListTemplate(name)
-        // bookmarkslist.saveList(newList)
-        // this.lists = bookmarkslist.loadLists()
-        // this.updateCurrentListId(newList.id)
       },
       listDeleted (listId) {
         this.$confirm('Delete this list and all bookmarks in it?')

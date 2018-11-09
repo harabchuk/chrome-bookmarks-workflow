@@ -9,15 +9,6 @@
 
       <router-view></router-view>
 
-      <div class="ListSelectorContainer">
-        <ListSelector
-            :lists="lists"
-            :selectedListId="currentListId"
-            @changed="listChanged"
-            @deleted="listDeleted"
-        ></ListSelector>
-      </div>
-
       <div v-if="lists.length && currentUrl && !bookmark" class="AddBookmarkContainer">
         <AddBookmark
             :title="currentTitle"

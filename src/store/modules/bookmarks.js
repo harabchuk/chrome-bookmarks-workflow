@@ -24,6 +24,12 @@ const actions = {
     const currentListId = bookmarkslistApi.getLastListId()
     commit('updateCurrentListId', currentListId)
     return lists
+  },
+  createList ({ commit }, name) {
+    const newList = bookmarkslistApi.getListTemplate(name)
+    bookmarkslistApi.saveList(newList)
+    commit('addList', newList)
+    return newList
   }
 }
 
@@ -39,6 +45,9 @@ const mutations = {
     lists.forEach(l => {
       state.lists.push(l)
     })
+  },
+  addList (state, list) {
+    state.lists.push(list)
   }
 }
 

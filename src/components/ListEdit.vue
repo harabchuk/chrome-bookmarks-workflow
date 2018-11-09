@@ -11,7 +11,7 @@
                  type="primary"
                  size="mini"
                  @click="onSave"
-                 :disabled="!inputName"
+                 :disabled="!inputName.trim()"
       >
         Save
       </el-button>
@@ -36,7 +36,7 @@
     props: {},
     methods: {
       onSave () {
-        this.$emit('created', this.inputName)
+        this.$emit('saved', this.inputName)
         this.inputName = ''
       },
       onCancel () {
