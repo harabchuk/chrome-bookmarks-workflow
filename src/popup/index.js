@@ -7,18 +7,18 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueRouter from 'vue-router'
 import XRouter from '../libs/xrouter'
 import states from './screens_states'
-import BookmarksList from '../popup/screens/BookmarksList'
-import EditBookmark from '../popup/screens/EditBookmark'
-import EditList from '../popup/screens/EditList'
+import BookmarksListScreen from '../popup/screens/BookmarksListScreen'
+import EditBookmarkScreen from '../popup/screens/EditBookmarkScreen'
+import EditListScreen from '../popup/screens/EditListScreen'
 
 Vue.config.productionTip = false
 
 const router = new VueRouter({
   mode: 'abstract',
   routes: [
-    {path: '/BookmarksList', component: BookmarksList},
-    {path: '/EditBookmark', component: EditBookmark},
-    {path: '/EditList', component: EditList}
+    {path: '/BookmarksList', component: BookmarksListScreen},
+    {path: '/EditBookmark', component: EditBookmarkScreen},
+    {path: '/EditList', component: EditListScreen}
   ]
 })
 
