@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import bookmarkslistApi from '../../api/bookmarkslist'
 
 const state = {
@@ -8,21 +9,28 @@ const state = {
   lists: []
 }
 
+const findBookmark = (items, url) => items.find(i => i.url === url)
+
 const getters = {
 }
 
 const actions = {
-  setUrlTitle ({ commit }, url, title) {
-    commit('updateCurrentUrlTitle', url, title)
+  setUrlTitle ({ commit }, { url, title }) {
+    commit('updateCurrentUrlTitle', { url, title })
   },
-  setCurrentListId ({ commit }, listId) {
+  setCurrentListId ({ commit, state }, listId) {
+    if (state.currentListId === listId) {
+      return
+    }
     commit('updateCurrentListId', listId)
+    commit('updateItems', bookmarkslistApi.loadItems(listId))
+    bookmarkslistApi.setLastListId(listId)
   },
-  loadLists ({ commit }) {
+  loadLists ({ commit, dispatch }) {
     const lists = bookmarkslistApi.loadLists()
     commit('updateLists', lists)
     const currentListId = bookmarkslistApi.getLastListId()
-    commit('updateCurrentListId', currentListId)
+    dispatch('setCurrentListId', currentListId)
     return lists
   },
   createList ({ commit }, name) {
@@ -30,11 +38,22 @@ const actions = {
     bookmarkslistApi.saveList(newList)
     commit('addList', newList)
     return newList
+  },
+  addBookmark ({ commit, state }, bookmark) {
+    if (!bookmark) {
+      throw new Error('addBookmark: bookmark is empty')
+    }
+    if (findBookmark(state.items, bookmark.url)) {
+      return
+    }
+    commit('pushBookmark', bookmark)
+    bookmarkslistApi.addBookmark(state.currentListId, bookmark)
+    return bookmark
   }
 }
 
 const mutations = {
-  updateCurrentUrlTitle (state, url, title) {
+  updateCurrentUrlTitle (state, { url, title }) {
     state.currentUrl = url
     state.currentTitle = title
   },
@@ -48,6 +67,12 @@ const mutations = {
   },
   addList (state, list) {
     state.lists.push(list)
+  },
+  updateItems (state, items) {
+    Vue.set(state, 'items', items)
+  },
+  pushBookmark (state, bookmark) {
+    state.items.push(bookmark)
   }
 }
 

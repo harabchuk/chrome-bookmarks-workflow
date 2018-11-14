@@ -14,6 +14,39 @@
       <AddBookmark @clicked="onNew"></AddBookmark>
     </div>
 
+    <div v-if="lists.length && currentListId" class="BookmarksContainer">
+        <div class="BookmarksContainer-title">
+          <span class="Popup-sectionTitle">Bookmarks in this list</span>
+          <!--<el-select
+            v-if="items.length"
+            v-model="statusFilter"
+            multiple
+            collapse-tags
+            placeholder="Filter"
+            size="mini"
+            class="BookmarksContainer-filter"
+          >
+            <el-option
+              v-for="status in possibleStatuses"
+              :key="status.name"
+              :label="status.name"
+              :value="status.name">
+            </el-option>
+          </el-select>-->
+        </div>
+        <div v-if="!items.length">No bookmarks yet.</div>
+        <BookmarkCard
+            v-for="bookmark in items"
+            :bookmark="bookmark" :key="bookmark.url"
+            :active="bookmark.url==currentUrl"
+            :possibleStatuses="possibleStatuses"
+            @linkClick="clickLink"
+            @delete="deleteBookmark"
+            @updated="updatedBookmark"
+        >
+        </BookmarkCard>
+      </div>
+
   </div>
 </template>
 
@@ -21,12 +54,14 @@
   import { mapState, mapActions } from 'vuex'
   import ListSelector from '../../components/ListSelector'
   import AddBookmark from '../../components/AddBookmark'
+  import BookmarkCard from '../../components/BookmarkCard'
 
   export default {
     name: 'BookmarksListScreen',
     components: {
       ListSelector,
-      AddBookmark
+      AddBookmark,
+      BookmarkCard
     },
     computed: {
       ...mapState('bookmarks', [
@@ -34,7 +69,10 @@
         'lists',
         'currentListId',
         'currentUrl'
-      ])
+      ]),
+      possibleStatuses () {
+        return []
+      }
     },
     methods: {
       ...mapActions('bookmarks', [
@@ -65,6 +103,24 @@
             // }
           })
           .catch(_ => {})
+      },
+      clickLink (bookmark) {
+        const {url} = bookmark
+        chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+          const activeTab = tabs[0]
+          chrome.tabs.update(activeTab.id, {url})
+          window.close()
+        })
+      },
+      deleteBookmark (bookmark) {
+        // bookmarkslist.removeBookmark(this.currentListId, bookmark)
+        // this.updateCurrentListId(this.currentListId)
+        // this.notifyTabBookmarkDeleted(bookmark)
+      },
+      updatedBookmark (bookmark) {
+        // bookmarkslist.saveBookmark(this.currentListId, bookmark)
+        // this.updateCurrentListId(this.currentListId)
+        // this.notifyTabBookmarkUpdated(bookmark)
       }
     }
   }

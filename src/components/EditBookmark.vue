@@ -12,8 +12,15 @@
       </div>
       <TagList :tags="tags" @created="onTagCreated" @deleted="onTagDeleted"></TagList>
       <div class="EditBookmark-actions">
-        <el-button type="primary" size="mini" @click="onSave" class="EditBookmark-button">Save</el-button>
-        <el-button type="default" size="mini" @click="onCancel" class="EditBookmark-button">Cancel</el-button>
+        <el-button type="primary" size="mini"
+                   @click="onSave"
+                   class="EditBookmark-button"
+                   :disabled="!canSave">
+          Save
+        </el-button>
+        <el-button type="default" size="mini" @click="onCancel" class="EditBookmark-button">
+          Cancel
+        </el-button>
       </div>
     </div>
 
@@ -33,6 +40,9 @@
         status: null
       }
     },
+    mounted () {
+      this.inputTitle = this.title
+    },
     components: {
       TagList,
       StatusSelector
@@ -50,6 +60,11 @@
       },
       possibleStatuses: {
         type: Array
+      }
+    },
+    computed: {
+      canSave () {
+        return this.inputTitle.length > 0
       }
     },
     methods: {
@@ -82,7 +97,7 @@
         this.status = statusName
       },
       onCancel () {
-        this.tags = []
+        this.$emit('cancel')
       },
       onSave () {
         this.$emit('saved', this.prepareBookmark())

@@ -9,6 +9,7 @@
 
       <router-view></router-view>
 
+<!--
       <div v-if="lists.length && bookmark" class="BookmarkDetailContainer">
         <div class="Popup-sectionTitle">Current page</div>
         <BookmarkDetail
@@ -50,6 +51,7 @@
         >
         </BookmarkCard>
       </div>
+-->
 
     </div> <!-- /main -->
 
@@ -90,7 +92,7 @@
     created () {
       this.loadLists()
       tabs.currentTab().then(activeTab => {
-        this.setUrlTitle(activeTab.url, activeTab.title)
+        this.setUrlTitle(activeTab)
       })
 
       this.currentListId = bookmarkslist.getLastListId()
