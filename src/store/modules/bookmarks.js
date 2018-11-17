@@ -9,7 +9,16 @@ const state = {
   lists: []
 }
 
-const findBookmark = (items, url) => items.find(i => i.url === url)
+// const findBookmarkIndex = (items, bookmark) => {
+//   for (let i = 0; i < items.length; i++) {
+//     if (items[i].url === bookmark.url) {
+//       return i
+//     }
+//   }
+//   return -1
+// }
+const findBookmarkIndex = (items, bookmark) => items.findIndex(i => i.url === bookmark.url)
+const bookmarkExists = (items, bookmark) => findBookmarkIndex(items, bookmark) > -1
 
 const getters = {
 }
@@ -43,10 +52,10 @@ const actions = {
     if (!bookmark) {
       throw new Error('addBookmark: bookmark is empty')
     }
-    if (findBookmark(state.items, bookmark.url)) {
+    if (bookmarkExists(state.items, bookmark)) {
       return
     }
-    commit('pushBookmark', bookmark)
+    commit('pushItem', bookmark)
     bookmarkslistApi.addBookmark(state.currentListId, bookmark)
     return bookmark
   },
@@ -54,12 +63,22 @@ const actions = {
     if (!bookmark) {
       throw new Error('updateBookmark: bookmark is empty')
     }
-    if (!findBookmark(state.items, bookmark.url)) {
+    if (!bookmarkExists(state.items, bookmark)) {
       return
     }
-    commit('setBookmark', bookmark)
+    commit('setItem', bookmark)
     bookmarkslistApi.saveBookmark(state.currentListId, bookmark)
     return bookmark
+  },
+  deleteBookmark ({ commit, state }, bookmark) {
+    if (!bookmark) {
+      throw new Error('deleteBookmark: bookmark is empty')
+    }
+    if (!bookmarkExists(state.items, bookmark)) {
+      return
+    }
+    commit('deleteItem', bookmark)
+    bookmarkslistApi.removeBookmark(state.currentListId, bookmark)
   }
 }
 
@@ -82,15 +101,20 @@ const mutations = {
   updateItems (state, items) {
     Vue.set(state, 'items', items)
   },
-  pushBookmark (state, bookmark) {
+  pushItem (state, bookmark) {
     state.items.push(bookmark)
   },
-  setBookmark (state, bookmark) {
-    state.items.forEach((b, index) => {
-      if (b.url === bookmark.url) {
-        Vue.set(state.items, index, bookmark)
-      }
-    })
+  setItem (state, bookmark) {
+    const index = findBookmarkIndex(state.items, bookmark)
+    if (index > -1) {
+      Vue.set(state.items, index, bookmark)
+    }
+  },
+  deleteItem (state, bookmark) {
+    const index = findBookmarkIndex(state.items, bookmark)
+    if (index > -1) {
+      state.items.splice(index, 1)
+    }
   }
 }
 

@@ -2,16 +2,16 @@
   <div>
     <div class="ListSelectorContainer">
       <ListSelector
-          :lists="lists"
-          :selectedListId="currentListId"
-          @changed="listChanged"
-          @new="listNew"
-          @deleted="listDeleted"
+        :lists="lists"
+        :selectedListId="currentListId"
+        @changed="onListChanged"
+        @new="onListNew"
+        @deleted="onListDeleted"
       ></ListSelector>
     </div>
 
     <div v-if="lists.length && currentUrl" class="AddBookmarkContainer">
-      <AddBookmark @clicked="onNew"></AddBookmark>
+      <AddBookmark @clicked="onNewBookmark" />
     </div>
 
     <div v-if="lists.length && currentListId" class="BookmarksContainer">
@@ -36,15 +36,14 @@
         </div>
         <div v-if="!items.length">No bookmarks yet.</div>
         <BookmarkCard
-            v-for="bookmark in items"
-            :bookmark="bookmark" :key="bookmark.url"
-            :active="bookmark.url==currentUrl"
-            :possibleStatuses="possibleStatuses"
-            @linkClick="clickLink"
-            @delete="deleteBookmark"
-            @updated="updatedBookmark"
-        >
-        </BookmarkCard>
+          v-for="bookmark in items"
+          :bookmark="bookmark" :key="bookmark.url"
+          :active="bookmark.url==currentUrl"
+          :possibleStatuses="possibleStatuses"
+          @linkClick="onClickLink"
+          @delete="onDeleteBookmark"
+          @updated="onUpdatedBookmark"
+        />
       </div>
 
   </div>
@@ -78,35 +77,25 @@
     methods: {
       ...mapActions('bookmarks', [
         'setCurrentListId',
-        'updateBookmark'
+        'updateBookmark',
+        'deleteBookmark'
       ]),
-      onNew () {
+      onNewBookmark () {
         this.$xtransition('NEW_BOOKMARK')
       },
-      onEdit () {
-        this.$xtransition('EDIT_BOOKMARK', { bookmark_id: 2 })
-      },
-      listNew () {
+      onListNew () {
         this.$xtransition('NEW_LIST')
       },
-      listChanged (list) {
+      onListChanged (list) {
         this.setCurrentListId(list.id)
       },
-      listDeleted (listId) {
+      onListDeleted (listId) {
         this.$confirm('Delete this list and all bookmarks in it?')
           .then(_ => {
-            // bookmarkslist.loadItems(listId).forEach(this.notifyTabBookmarkDeleted)
-            // bookmarkslist.removeList(listId)
-            // this.lists = bookmarkslist.loadLists()
-            // if (this.lists.length) {
-            //   this.updateCurrentListId(this.lists[0].id)
-            // } else {
-            //   this.updateCurrentListId(0)
-            // }
           })
           .catch(_ => {})
       },
-      clickLink (bookmark) {
+      onClickLink (bookmark) {
         const {url} = bookmark
         chrome.tabs.query({active: true, currentWindow: true}, tabs => {
           const activeTab = tabs[0]
@@ -114,12 +103,15 @@
           window.close()
         })
       },
-      deleteBookmark (bookmark) {
-        // bookmarkslist.removeBookmark(this.currentListId, bookmark)
-        // this.updateCurrentListId(this.currentListId)
-        this.notifyTabBookmarkDeleted(bookmark)
+      onDeleteBookmark (bookmark) {
+        this.$confirm('Delete bookmark?')
+          .then(_ => {
+            this.deleteBookmark(bookmark)
+            this.notifyTabBookmarkDeleted(bookmark)
+          })
+          .catch(_ => {})
       },
-      updatedBookmark (bookmark) {
+      onUpdatedBookmark (bookmark) {
         this.updateBookmark(bookmark)
         this.notifyTabBookmarkUpdated(bookmark)
       },

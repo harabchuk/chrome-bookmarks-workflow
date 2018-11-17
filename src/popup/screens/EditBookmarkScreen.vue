@@ -1,11 +1,10 @@
 <template>
   <div>
     <EditBookmark
-        :title="currentTitle"
-        :url="currentUrl"
-        :possibleStatuses="possibleStatuses"
-        @saved="onSave"
-        @cancel="onCancel"
+      :bookmark="emptyBookmark"
+      :possibleStatuses="possibleStatuses"
+      @saved="onSave"
+      @cancel="onCancel"
     ></EditBookmark>
   </div>
 </template>
@@ -28,8 +27,13 @@
       possibleStatuses () {
         return []
       },
-      bookmarkId () {
-        return this.$xrouter.eventArgs['bookmark_id']
+      emptyBookmark () {
+        return {
+          title: this.currentTitle,
+          url: this.currentUrl,
+          tags: [],
+          status: ''
+        }
       }
     },
     methods: {
