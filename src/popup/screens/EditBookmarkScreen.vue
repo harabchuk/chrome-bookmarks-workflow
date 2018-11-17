@@ -1,5 +1,6 @@
 <template>
   <div>
+    <span class="Popup-sectionTitle">New bookmark</span>
     <EditBookmark
       :bookmark="emptyBookmark"
       :possibleStatuses="possibleStatuses"

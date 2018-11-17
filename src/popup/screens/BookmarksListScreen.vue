@@ -94,7 +94,11 @@
         this.$confirm('Delete this list and all bookmarks in it?')
           .then(_ => {
             this.items.forEach(this.notifyTabBookmarkDeleted)
-            this.deleteList(listId)
+            this.deleteList(listId).then(lists => {
+              if (!lists.length) {
+                this.$xtransition('NEW_LIST')
+              }
+            })
           })
           .catch(_ => {})
       },

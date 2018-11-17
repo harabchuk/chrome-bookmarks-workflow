@@ -51,6 +51,7 @@ const actions = {
         dispatch('setCurrentListId', 0)
       }
     }
+    return state.lists
   },
   addBookmark ({ commit, state }, bookmark) {
     if (!bookmark) {

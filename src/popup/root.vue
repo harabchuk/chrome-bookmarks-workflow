@@ -6,53 +6,7 @@
     </div>
 
     <div class="Popup-main">
-
       <router-view></router-view>
-
-<!--
-      <div v-if="lists.length && bookmark" class="BookmarkDetailContainer">
-        <div class="Popup-sectionTitle">Current page</div>
-        <BookmarkDetail
-            :bookmark="bookmark"
-            :possibleStatuses="possibleStatuses"
-            @statusChanged="bookmarkStatusChanged"
-        ></BookmarkDetail>
-      </div>
-
-      <div v-if="lists.length && currentListId" class="BookmarksContainer">
-        <div class="BookmarksContainer-title">
-          <span class="Popup-sectionTitle">Bookmarks in this list</span>
-          <el-select
-            v-if="items.length"
-            v-model="statusFilter"
-            multiple
-            collapse-tags
-            placeholder="Filter"
-            size="mini"
-            class="BookmarksContainer-filter"
-          >
-            <el-option
-              v-for="status in possibleStatuses"
-              :key="status.name"
-              :label="status.name"
-              :value="status.name">
-            </el-option>
-          </el-select>
-        </div>
-        <div v-if="!items.length">No bookmarks yet.</div>
-        <BookmarkCard
-            v-for="bookmark in filteredBookmarks"
-            :bookmark="bookmark" :key="bookmark.url"
-            :active="bookmark.url==currentUrl"
-            :possibleStatuses="possibleStatuses"
-            @linkClick="clickLink"
-            @delete="deleteBookmark"
-            @updated="updatedBookmark"
-        >
-        </BookmarkCard>
-      </div>
--->
-
     </div> <!-- /main -->
 
     <div class="Popup-footer"></div>
@@ -61,49 +15,23 @@
 
 <script>
   import { mapActions } from 'vuex'
-  import bookmarkslist from '../api/bookmarkslist'
   import tabs from '../api/tabs'
-  import BookmarkCard from '../components/BookmarkCard'
-  import ListSelector from '../components/ListSelector'
-  import AddBookmark from '../components/AddBookmark'
-  import BookmarkDetail from '../components/BookmarkDetail'
 
   export default {
     data: () => ({
-      currentUrl: null,
-      currentTitle: '',
-      lists: [],
-      items: [],
-      bookmark: null,
-      currentListId: 0,
       possibleStatuses: [
         {name: 'Hot', color: '#FF8000', default: false},
         {name: 'Warm', color: '#63C94F', default: true},
         {name: 'Cold', color: '#70A2FF', default: false}
-      ],
-      statusFilter: []
+      ]
     }),
-    components: {
-      BookmarkCard,
-      ListSelector,
-      AddBookmark,
-      BookmarkDetail
-    },
     created () {
-      this.loadLists()
       tabs.currentTab().then(activeTab => {
         this.setUrlTitle(activeTab)
       })
-
-      this.currentListId = bookmarkslist.getLastListId()
-      tabs.currentTab().then(activeTab => {
-        this.currentUrl = activeTab.url
-        this.currentTitle = activeTab.title
-        this.lists = bookmarkslist.loadLists()
-        if (this.lists.length) {
-          this.updateCurrentListId(this.currentListId)
-        } else {
-          this.updateCurrentListId(0)
+      this.loadLists().then(lists => {
+        if (!lists.length) {
+          this.$xtransition('NEW_LIST')
         }
       })
     },
@@ -119,85 +47,7 @@
       ...mapActions('bookmarks', [
         'setUrlTitle',
         'loadLists'
-      ]),
-      updateCurrentListId (listId) {
-        if (listId) {
-          bookmarkslist.setLastListId(listId)
-          this.currentListId = listId
-          this.items = bookmarkslist.loadItems(this.currentListId)
-          this.bookmark = this.items.find(i => i.url === this.currentUrl)
-        } else {
-          this.currentListId = 0
-          this.items = []
-          this.bookmark = null
-        }
-      },
-      listChanged (list) {
-        this.updateCurrentListId(list.id)
-      },
-      listCreated (name) {
-        const newList = bookmarkslist.getListTemplate(name)
-        bookmarkslist.saveList(newList)
-        this.lists = bookmarkslist.loadLists()
-        this.updateCurrentListId(newList.id)
-      },
-      listDeleted (listId) {
-        this.$confirm('Delete this list and all bookmarks in it?')
-          .then(_ => {
-            bookmarkslist.loadItems(listId).forEach(this.notifyTabBookmarkDeleted)
-            bookmarkslist.removeList(listId)
-            this.lists = bookmarkslist.loadLists()
-            if (this.lists.length) {
-              this.updateCurrentListId(this.lists[0].id)
-            } else {
-              this.updateCurrentListId(0)
-            }
-          })
-          .catch(_ => {})
-      },
-      bookmarkCreated (bookmark) {
-        bookmarkslist.addBookmark(this.currentListId, bookmark)
-        this.bookmark = bookmark
-        this.items = bookmarkslist.loadItems(this.currentListId)
-        this.notifyTabBookmarkUpdated(bookmark)
-      },
-      clickLink (bookmark) {
-        const {url} = bookmark
-        chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-          const activeTab = tabs[0]
-          chrome.tabs.update(activeTab.id, {url})
-          window.close()
-        })
-      },
-      deleteBookmark (bookmark) {
-        bookmarkslist.removeBookmark(this.currentListId, bookmark)
-        this.updateCurrentListId(this.currentListId)
-        this.notifyTabBookmarkDeleted(bookmark)
-      },
-      updatedBookmark (bookmark) {
-        bookmarkslist.saveBookmark(this.currentListId, bookmark)
-        this.updateCurrentListId(this.currentListId)
-        this.notifyTabBookmarkUpdated(bookmark)
-      },
-      bookmarkStatusChanged (name) {
-        this.bookmark.status = name
-        bookmarkslist.saveBookmark(this.currentListId, this.bookmark)
-        this.updateCurrentListId(this.currentListId)
-        this.notifyTabBookmarkUpdated(this.bookmark)
-      },
-      notifyTabBookmarkUpdated (bookmark) {
-        tabs.sendMessageByUrl(bookmark.url, {
-          type: 'bookmark_updated',
-          possibleStatuses: this.possibleStatuses,
-          bookmark
-        })
-      },
-      notifyTabBookmarkDeleted (bookmark) {
-        tabs.sendMessageByUrl(bookmark.url, {
-          type: 'bookmark_deleted',
-          bookmark
-        })
-      }
+      ])
     }
   }
 </script>
