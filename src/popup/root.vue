@@ -18,13 +18,6 @@
   import tabs from '../api/tabs'
 
   export default {
-    data: () => ({
-      possibleStatuses: [
-        {name: 'Hot', color: '#FF8000', default: false},
-        {name: 'Warm', color: '#63C94F', default: true},
-        {name: 'Cold', color: '#70A2FF', default: false}
-      ]
-    }),
     created () {
       tabs.currentTab().then(activeTab => {
         this.setUrlTitle(activeTab)

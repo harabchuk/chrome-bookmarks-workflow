@@ -2,8 +2,8 @@
   <div>
     <span class="Popup-sectionTitle">New list</span>
     <ListEdit
-        @canceled="onCancel"
-        @saved="onSave"
+      @canceled="onCancel"
+      @saved="onSave"
     >
     </ListEdit>
   </div>

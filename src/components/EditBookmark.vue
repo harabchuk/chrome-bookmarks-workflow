@@ -4,9 +4,9 @@
       <el-input type="textarea" v-model="currentBookmark.title" class="EditBookmark-input"></el-input>
       <div class="EditBookmark-status">
         <StatusSelector
-            :possibleStatuses="possibleStatuses"
-            :currentStatus="currentBookmark.status"
-            @changed="onStatusChanged"
+          :possibleStatuses="possibleStatuses"
+          :currentStatus="currentBookmark.status"
+          @changed="onStatusChanged"
         ></StatusSelector>
       </div>
       <TagList :tags="currentBookmark.tags" @created="onTagCreated" @deleted="onTagDeleted"></TagList>
@@ -44,6 +44,7 @@
         tags: [ ...this.bookmark.tags ],
         status: this.bookmark.status
       }
+      console.log(this.possibleStatuses)
     },
     components: {
       TagList,

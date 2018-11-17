@@ -50,7 +50,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapState, mapActions, mapGetters } from 'vuex'
   import tabs from '../../api/tabs'
   import ListSelector from '../../components/ListSelector'
   import AddBookmark from '../../components/AddBookmark'
@@ -70,9 +70,9 @@
         'currentListId',
         'currentUrl'
       ]),
-      possibleStatuses () {
-        return []
-      }
+      ...mapGetters('statuses', [
+        'possibleStatuses'
+      ])
     },
     methods: {
       ...mapActions('bookmarks', [

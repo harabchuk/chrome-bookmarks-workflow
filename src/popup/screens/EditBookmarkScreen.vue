@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapState, mapActions, mapGetters } from 'vuex'
   import EditBookmark from '../../components/EditBookmark'
 
   export default {
@@ -24,6 +24,9 @@
         'currentUrl',
         'currentTitle',
         'currentListId'
+      ]),
+      ...mapGetters('statuses', [
+        'possibleStatuses'
       ]),
       possibleStatuses () {
         return []

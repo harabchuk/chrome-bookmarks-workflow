@@ -21,11 +21,11 @@
     </div>
 
     <EditBookmark
-        v-if="editing"
-        :bookmark="bookmark"
-        :possibleStatuses="[]"
-        @cancel="onCancelClick"
-        @saved="onSaveClick"
+      v-if="editing"
+      :bookmark="bookmark"
+      :possibleStatuses="possibleStatuses"
+      @cancel="onCancelClick"
+      @saved="onSaveClick"
     />
 
   </el-card>
@@ -52,9 +52,7 @@
         default: true
       },
       possibleStatuses: {
-        type: Array,
-        required: false,
-        default: []
+        type: Array
       }
     },
     computed: {
