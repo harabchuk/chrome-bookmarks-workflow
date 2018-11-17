@@ -78,7 +78,8 @@
       ...mapActions('bookmarks', [
         'setCurrentListId',
         'updateBookmark',
-        'deleteBookmark'
+        'deleteBookmark',
+        'deleteList'
       ]),
       onNewBookmark () {
         this.$xtransition('NEW_BOOKMARK')
@@ -92,6 +93,8 @@
       onListDeleted (listId) {
         this.$confirm('Delete this list and all bookmarks in it?')
           .then(_ => {
+            this.items.forEach(this.notifyTabBookmarkDeleted)
+            this.deleteList(listId)
           })
           .catch(_ => {})
       },

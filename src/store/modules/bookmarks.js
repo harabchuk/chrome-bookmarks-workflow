@@ -9,14 +9,6 @@ const state = {
   lists: []
 }
 
-// const findBookmarkIndex = (items, bookmark) => {
-//   for (let i = 0; i < items.length; i++) {
-//     if (items[i].url === bookmark.url) {
-//       return i
-//     }
-//   }
-//   return -1
-// }
 const findBookmarkIndex = (items, bookmark) => items.findIndex(i => i.url === bookmark.url)
 const bookmarkExists = (items, bookmark) => findBookmarkIndex(items, bookmark) > -1
 
@@ -47,6 +39,18 @@ const actions = {
     bookmarkslistApi.saveList(newList)
     commit('addList', newList)
     return newList
+  },
+  deleteList ({ commit, state, dispatch }, listId) {
+    bookmarkslistApi.removeItems(listId)
+    bookmarkslistApi.removeList(listId)
+    commit('removeList', listId)
+    if (state.currentListId === listId) {
+      if (state.lists.length) {
+        dispatch('setCurrentListId', state.lists[0].id)
+      } else {
+        dispatch('setCurrentListId', 0)
+      }
+    }
   },
   addBookmark ({ commit, state }, bookmark) {
     if (!bookmark) {
@@ -97,6 +101,12 @@ const mutations = {
   },
   addList (state, list) {
     state.lists.push(list)
+  },
+  removeList (state, listId) {
+    const index = state.lists.findIndex(l => l.id === listId)
+    if (index > -1) {
+      state.lists.splice(index, 1)
+    }
   },
   updateItems (state, items) {
     Vue.set(state, 'items', items)
