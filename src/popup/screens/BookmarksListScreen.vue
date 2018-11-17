@@ -52,6 +52,7 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
+  import tabs from '../../api/tabs'
   import ListSelector from '../../components/ListSelector'
   import AddBookmark from '../../components/AddBookmark'
   import BookmarkCard from '../../components/BookmarkCard'
@@ -76,7 +77,8 @@
     },
     methods: {
       ...mapActions('bookmarks', [
-        'setCurrentListId'
+        'setCurrentListId',
+        'updateBookmark'
       ]),
       onNew () {
         this.$xtransition('NEW_BOOKMARK')
@@ -115,12 +117,24 @@
       deleteBookmark (bookmark) {
         // bookmarkslist.removeBookmark(this.currentListId, bookmark)
         // this.updateCurrentListId(this.currentListId)
-        // this.notifyTabBookmarkDeleted(bookmark)
+        this.notifyTabBookmarkDeleted(bookmark)
       },
       updatedBookmark (bookmark) {
-        // bookmarkslist.saveBookmark(this.currentListId, bookmark)
-        // this.updateCurrentListId(this.currentListId)
-        // this.notifyTabBookmarkUpdated(bookmark)
+        this.updateBookmark(bookmark)
+        this.notifyTabBookmarkUpdated(bookmark)
+      },
+      notifyTabBookmarkUpdated (bookmark) {
+        tabs.sendMessageByUrl(bookmark.url, {
+          type: 'bookmark_updated',
+          possibleStatuses: this.possibleStatuses,
+          bookmark
+        })
+      },
+      notifyTabBookmarkDeleted (bookmark) {
+        tabs.sendMessageByUrl(bookmark.url, {
+          type: 'bookmark_deleted',
+          bookmark
+        })
       }
     }
   }

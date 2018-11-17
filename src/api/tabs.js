@@ -13,7 +13,6 @@ export default {
   },
   sendMessageByUrl (url, message) {
     this.findTabs(url).then(tabs => {
-      console.log('found', tabs)
       tabs.forEach(tab => {
         chrome.tabs.sendMessage(tab.id, message)
       })

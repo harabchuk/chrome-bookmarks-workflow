@@ -49,6 +49,17 @@ const actions = {
     commit('pushBookmark', bookmark)
     bookmarkslistApi.addBookmark(state.currentListId, bookmark)
     return bookmark
+  },
+  updateBookmark ({ commit, state }, bookmark) {
+    if (!bookmark) {
+      throw new Error('updateBookmark: bookmark is empty')
+    }
+    if (!findBookmark(state.items, bookmark.url)) {
+      return
+    }
+    commit('setBookmark', bookmark)
+    bookmarkslistApi.saveBookmark(state.currentListId, bookmark)
+    return bookmark
   }
 }
 
@@ -73,6 +84,13 @@ const mutations = {
   },
   pushBookmark (state, bookmark) {
     state.items.push(bookmark)
+  },
+  setBookmark (state, bookmark) {
+    state.items.forEach((b, index) => {
+      if (b.url === bookmark.url) {
+        Vue.set(state.items, index, bookmark)
+      }
+    })
   }
 }
 

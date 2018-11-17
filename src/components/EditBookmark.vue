@@ -1,16 +1,15 @@
 <template>
-  <div>
+  <div v-if="currentBookmark">
     <div class="EditBookmark">
-      <span class="title">New bookmark</span>
-      <el-input type="textarea" v-model="inputTitle" class="EditBookmark-input"></el-input>
+      <el-input type="textarea" v-model="currentBookmark.title" class="EditBookmark-input"></el-input>
       <div class="EditBookmark-status">
         <StatusSelector
             :possibleStatuses="possibleStatuses"
-            :currentStatus="status"
+            :currentStatus="currentBookmark.status"
             @changed="onStatusChanged"
         ></StatusSelector>
       </div>
-      <TagList :tags="tags" @created="onTagCreated" @deleted="onTagDeleted"></TagList>
+      <TagList :tags="currentBookmark.tags" @created="onTagCreated" @deleted="onTagDeleted"></TagList>
       <div class="EditBookmark-actions">
         <el-button type="primary" size="mini"
                    @click="onSave"
@@ -35,28 +34,24 @@
     name: 'EditBookmark',
     data () {
       return {
-        tags: [],
-        inputTitle: '',
-        status: null
+        currentBookmark: null
       }
     },
     mounted () {
-      this.inputTitle = this.title
+      this.currentBookmark = {
+        title: this.bookmark.title,
+        url: this.bookmark.url,
+        tags: [ ...this.bookmark.tags ],
+        status: this.bookmark.status
+      }
     },
     components: {
       TagList,
       StatusSelector
     },
     props: {
-      title: {
-        type: String,
-        required: false,
-        default: ''
-      },
-      url: {
-        type: String,
-        required: false,
-        default: ''
+      bookmark: {
+        type: Object
       },
       possibleStatuses: {
         type: Array
@@ -64,18 +59,10 @@
     },
     computed: {
       canSave () {
-        return this.inputTitle.length > 0
+        return this.currentBookmark.title.length > 0
       }
     },
     methods: {
-      prepareBookmark () {
-        return {
-          tags: this.tags,
-          title: this.inputTitle,
-          url: this.url,
-          status: this.status
-        }
-      },
       getDefaultStatusName () {
         const defaultStatus = this.possibleStatuses.find(i => i.default === true)
         if (defaultStatus) {
@@ -85,23 +72,22 @@
       },
       onTagCreated (newTag) {
         const normalizedTag = newTag.trim()
-        if (!normalizedTag.length || this.tags.indexOf(normalizedTag) > -1) {
+        if (!normalizedTag.length || this.currentBookmark.tags.indexOf(normalizedTag) > -1) {
           return
         }
-        this.tags.push(newTag)
+        this.currentBookmark.tags.push(newTag)
       },
       onTagDeleted (tag) {
-        this.tags.splice(this.tags.indexOf(tag), 1)
+        this.currentBookmark.tags.splice(this.currentBookmark.tags.indexOf(tag), 1)
       },
       onStatusChanged (statusName) {
-        this.status = statusName
+        this.currentBookmark.status = statusName
       },
       onCancel () {
         this.$emit('cancel')
       },
       onSave () {
-        this.$emit('saved', this.prepareBookmark())
-        this.tags = []
+        this.$emit('saved', this.currentBookmark)
       }
     }
   }

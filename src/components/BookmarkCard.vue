@@ -20,26 +20,28 @@
       <i @click="onEditClick(bookmark)" class="BookmarkView-icon el-icon-edit" title="Edit bookmark title"></i>
     </div>
 
-    <div class="BookmarkEdit editing" v-if="editing">
-      <el-input
-          type="textarea"
-          :rows="2"
-          placeholder=""
-          v-model="textareaTitle">
-      </el-input>
-      <i @click="onSaveClick()" class="el-icon-check" title="Save changes"></i>
-      <i @click="onCancelClick()" class="el-icon-close" title="Cancel changes"></i>
-    </div>
+    <EditBookmark
+        v-if="editing"
+        :bookmark="bookmark"
+        :possibleStatuses="[]"
+        @cancel="onCancelClick"
+        @saved="onSaveClick"
+    />
+
   </el-card>
 </template>
 
 <script>
+  import EditBookmark from './EditBookmark'
+
   export default {
     name: 'BookmarkCard',
+    components: {
+      EditBookmark
+    },
     data () {
       return {
-        editing: false,
-        textareaTitle: ''
+        editing: false
       }
     },
     props: {
@@ -76,16 +78,11 @@
         this.$emit('delete', bookmark)
       },
       onEditClick (bookmark) {
-        this.textareaTitle = this.bookmark.title
         this.editing = true
       },
-      onSaveClick () {
+      onSaveClick (bookmark) {
         this.editing = false
-        if (!this.textareaTitle || this.textareaTitle === this.bookmark.title) {
-          return
-        }
-        this.bookmark.title = this.textareaTitle
-        this.$emit('updated', this.bookmark)
+        this.$emit('updated', bookmark)
       },
       onCancelClick () {
         this.editing = false
