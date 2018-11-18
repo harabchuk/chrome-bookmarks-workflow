@@ -10,7 +10,8 @@ export default {
   getListTemplate (title) {
     return {
       name: title,
-      id: null
+      id: null,
+      statusSchemaId: 0
     }
   },
   loadLists () {

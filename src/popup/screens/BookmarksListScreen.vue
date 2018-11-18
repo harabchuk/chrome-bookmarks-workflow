@@ -17,7 +17,7 @@
     <div v-if="lists.length && currentListId" class="BookmarksContainer">
         <div class="BookmarksContainer-title">
           <span class="Popup-sectionTitle">Bookmarks in this list</span>
-          <!--<el-select
+          <el-select
             v-if="items.length"
             v-model="statusFilter"
             multiple
@@ -32,7 +32,7 @@
               :label="status.name"
               :value="status.name">
             </el-option>
-          </el-select>-->
+          </el-select>
         </div>
         <div v-if="!items.length">No bookmarks yet.</div>
         <BookmarkCard
@@ -58,6 +58,11 @@
 
   export default {
     name: 'BookmarksListScreen',
+    data () {
+      return {
+        statusFilter: ''
+      }
+    },
     components: {
       ListSelector,
       AddBookmark,

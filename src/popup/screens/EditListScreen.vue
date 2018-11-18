@@ -2,6 +2,7 @@
   <div>
     <span class="Popup-sectionTitle">New list</span>
     <ListEdit
+      :statusSchemas="statusSchemas"
       @canceled="onCancel"
       @saved="onSave"
     >
@@ -10,7 +11,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
   import ListEdit from '../../components/ListEdit'
 
   export default {
@@ -18,6 +19,11 @@
     props: {},
     components: {
       ListEdit
+    },
+    computed: {
+      ...mapState('statuses', [
+        'statusSchemas'
+      ])
     },
     methods: {
       ...mapActions('bookmarks', [
@@ -27,8 +33,8 @@
       onCancel () {
         this.$xtransition('CANCEL')
       },
-      onSave (name) {
-        this.createList(name)
+      onSave (list) {
+        this.createList(list)
           .then((newList) => {
             this.setCurrentListId(newList.id)
             this.$xtransition('SAVE')

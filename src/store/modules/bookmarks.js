@@ -34,8 +34,9 @@ const actions = {
     dispatch('setCurrentListId', currentListId)
     return lists
   },
-  createList ({ commit }, name) {
-    const newList = bookmarkslistApi.getListTemplate(name)
+  createList ({ commit }, list) {
+    const newList = bookmarkslistApi.getListTemplate(list.name)
+    newList.statusSchemaId = list.statusSchemaId
     bookmarkslistApi.saveList(newList)
     commit('addList', newList)
     return newList
