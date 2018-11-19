@@ -25,12 +25,9 @@
         'currentTitle',
         'currentListId'
       ]),
-      ...mapGetters('statuses', [
+      ...mapGetters('bookmarks', [
         'possibleStatuses'
       ]),
-      possibleStatuses () {
-        return []
-      },
       emptyBookmark () {
         return {
           title: this.currentTitle,

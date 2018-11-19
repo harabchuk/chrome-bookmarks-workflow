@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
   import ListEdit from '../../components/ListEdit'
 
   export default {
@@ -21,7 +21,7 @@
       ListEdit
     },
     computed: {
-      ...mapState('statuses', [
+      ...mapGetters('bookmarks', [
         'statusSchemas'
       ])
     },

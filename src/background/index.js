@@ -1,16 +1,16 @@
-import bookmarkslist from '../api/bookmarkslist'
+import bookmarkslistApi from '../api/bookmarkslist'
+import statusesApi from '../api/statuses'
 
 function getPossibleStatuses (listId) {
-  return [
-    {name: 'Hot', color: '#FF8000', default: false},
-    {name: 'Warm', color: '#63C94F', default: true},
-    {name: 'Cold', color: '#70A2FF', default: false}
-  ]
+  const list = bookmarkslistApi.loadList(listId)
+  if (list) {
+    return statusesApi.getPossibleStatuses(list.statusSchemaId)
+  }
 }
 
 function getBookmark (url) {
-  const currentListId = bookmarkslist.getLastListId()
-  return bookmarkslist.getBookmark(currentListId, url)
+  const currentListId = bookmarkslistApi.getLastListId()
+  return bookmarkslistApi.getBookmark(currentListId, url)
 }
 
 function initListeners () {
@@ -18,7 +18,7 @@ function initListeners () {
     if (msg.type === 'content_init') {
       sendResponse({
         bookmark: getBookmark(sender.tab.url),
-        possibleStatuses: getPossibleStatuses(bookmarkslist.getLastListId())
+        possibleStatuses: getPossibleStatuses(bookmarkslistApi.getLastListId())
       })
     }
   })

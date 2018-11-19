@@ -63,6 +63,8 @@
         statusFilter: ''
       }
     },
+    mounted () {
+    },
     components: {
       ListSelector,
       AddBookmark,
@@ -75,7 +77,8 @@
         'currentListId',
         'currentUrl'
       ]),
-      ...mapGetters('statuses', [
+      ...mapGetters('bookmarks', [
+        'currentList',
         'possibleStatuses'
       ])
     },

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import bookmarkslistApi from '../../api/bookmarkslist'
+import statusesApi from '../../api/statuses'
 
 const state = {
   currentUrl: '',
@@ -11,8 +12,22 @@ const state = {
 
 const findBookmarkIndex = (items, bookmark) => items.findIndex(i => i.url === bookmark.url)
 const bookmarkExists = (items, bookmark) => findBookmarkIndex(items, bookmark) > -1
+const findList = (lists, listId) => lists.find(l => l.id === listId)
 
 const getters = {
+  currentList (state) {
+    return findList(state.lists, state.currentListId)
+  },
+  possibleStatuses (state, getters) {
+    const list = getters.currentList
+    if (list) {
+      return statusesApi.getPossibleStatuses(list.statusSchemaId)
+    }
+    return []
+  },
+  statusSchemas (state) {
+    return statusesApi.getStatusSchemas()
+  }
 }
 
 const actions = {

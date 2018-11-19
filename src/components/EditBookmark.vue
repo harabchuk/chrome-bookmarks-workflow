@@ -42,9 +42,8 @@
         title: this.bookmark.title,
         url: this.bookmark.url,
         tags: [ ...this.bookmark.tags ],
-        status: this.bookmark.status
+        status: this.initialStatus
       }
-      console.log(this.possibleStatuses)
     },
     components: {
       TagList,
@@ -61,6 +60,19 @@
     computed: {
       canSave () {
         return this.currentBookmark.title.length > 0
+      },
+      initialStatus () {
+        let status = ''
+        if (this.bookmark.status) {
+          status = this.possibleStatuses.find(s => s.name === this.bookmark.status)
+        }
+        if (!status) {
+          status = this.possibleStatuses.find(s => s.default)
+        }
+        if (status) {
+          return status.name
+        }
+        return ''
       }
     },
     methods: {

@@ -39,6 +39,9 @@
     components: {
       EditBookmark
     },
+    mounted () {
+      console.log('card', this.possibleStatuses)
+    },
     data () {
       return {
         editing: false
