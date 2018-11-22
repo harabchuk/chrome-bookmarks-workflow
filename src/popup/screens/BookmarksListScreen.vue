@@ -18,13 +18,14 @@
         <div class="BookmarksContainer-title">
           <span class="Popup-sectionTitle">Bookmarks in this list</span>
           <el-select
-            v-if="items.length"
+            v-if="items.length && currentListId"
             v-model="statusFilter"
             multiple
             collapse-tags
             placeholder="Filter"
             size="mini"
             class="BookmarksContainer-filter"
+            @change="onFilterChanged"
           >
             <el-option
               v-for="status in possibleStatuses"
@@ -36,7 +37,7 @@
         </div>
         <div v-if="!items.length">No bookmarks yet.</div>
         <BookmarkCard
-          v-for="bookmark in items"
+          v-for="bookmark in filteredBookmarks"
           :bookmark="bookmark" :key="bookmark.url"
           :active="bookmark.url==currentUrl"
           :possibleStatuses="possibleStatuses"
@@ -60,10 +61,11 @@
     name: 'BookmarksListScreen',
     data () {
       return {
-        statusFilter: ''
+        statusFilter: []
       }
     },
     mounted () {
+      this.reloadFilters()
     },
     components: {
       ListSelector,
@@ -80,14 +82,25 @@
       ...mapGetters('bookmarks', [
         'currentList',
         'possibleStatuses'
-      ])
+      ]),
+      filteredBookmarks () {
+        if (!this.currentListId) {
+          return this.items
+        }
+        if (!this.statusFilter.length) {
+          return this.items
+        }
+        return this.items.filter((i) => this.statusFilter.includes(i.status))
+      }
     },
     methods: {
       ...mapActions('bookmarks', [
         'setCurrentListId',
         'updateBookmark',
         'deleteBookmark',
-        'deleteList'
+        'deleteList',
+        'getFilters',
+        'updateFilters'
       ]),
       onNewBookmark () {
         this.$xtransition('NEW_BOOKMARK')
@@ -97,6 +110,7 @@
       },
       onListChanged (list) {
         this.setCurrentListId(list.id)
+        this.reloadFilters()
       },
       onListDeleted (listId) {
         this.$confirm('Delete this list and all bookmarks in it?')
@@ -105,6 +119,8 @@
             this.deleteList(listId).then(lists => {
               if (!lists.length) {
                 this.$xtransition('NEW_LIST')
+              } else {
+                this.reloadFilters()
               }
             })
           })
@@ -130,6 +146,9 @@
         this.updateBookmark(bookmark)
         this.notifyTabBookmarkUpdated(bookmark)
       },
+      onFilterChanged (newFilters) {
+        this.updateFilters(newFilters)
+      },
       notifyTabBookmarkUpdated (bookmark) {
         tabs.sendMessageByUrl(bookmark.url, {
           type: 'bookmark_updated',
@@ -142,11 +161,16 @@
           type: 'bookmark_deleted',
           bookmark
         })
+      },
+      reloadFilters () {
+        if (this.currentList) {
+          this.statusFilter = this.currentList.filters || []
+        }
       }
     }
   }
 </script>
 
-<style scoped>
+<style>
 
 </style>

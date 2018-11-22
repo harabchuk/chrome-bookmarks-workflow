@@ -28,14 +28,6 @@
         }
       })
     },
-    computed: {
-      filteredBookmarks () {
-        if (!this.statusFilter.length) {
-          return this.items
-        }
-        return this.items.filter((i) => this.statusFilter.includes(i.status))
-      }
-    },
     methods: {
       ...mapActions('bookmarks', [
         'setUrlTitle',
@@ -107,6 +99,14 @@
 
   .BookmarksContainer-filter {
     width: 140px;
+  }
+
+  .BookmarksContainer-filter .el-select__tags-text {
+    overflow: hidden;
+    display: inline-flex;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 35px;
   }
 
   .listControls {

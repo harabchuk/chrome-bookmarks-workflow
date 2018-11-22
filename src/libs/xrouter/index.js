@@ -40,7 +40,6 @@ export default {
       this.$xrouter.eventArgs = eventArgs
       const newPath = getMatchingPathFromState(router, newState.value)
       router.replace(newPath)
-      console.log('navigated to', newPath)
       return newState
     }
   }

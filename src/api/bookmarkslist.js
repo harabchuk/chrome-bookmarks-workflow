@@ -11,7 +11,8 @@ export default {
     return {
       name: title,
       id: null,
-      statusSchemaId: 0
+      statusSchemaId: 0,
+      filters: []
     }
   },
   loadLists () {
@@ -43,11 +44,16 @@ export default {
   },
   saveList (list) {
     const listObj = list
+    const lists = this.loadLists()
     if (!listObj.id) {
       listObj.id = generateId()
+      lists.push(list)
+    } else {
+      const index = lists.findIndex(l => l.id === list.id)
+      if (index > -1) {
+        lists[index] = {...lists[index], ...list}
+      }
     }
-    const lists = this.loadLists()
-    lists.push(list)
     this.saveLists(lists)
   },
   getBookmark (listId, url) {

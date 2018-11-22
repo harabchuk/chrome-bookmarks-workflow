@@ -69,6 +69,22 @@ const actions = {
     }
     return state.lists
   },
+  getFilters ({ state }) {
+    const list = findList(state.lists, state.currentListId)
+    if (list) {
+      return list.filters || []
+    }
+    return []
+  },
+  updateFilters ({ state, commit }, filters) {
+    const list = findList(state.lists, state.currentListId)
+    if (list) {
+      const listCopy = {...list}
+      listCopy.filters = filters
+      bookmarkslistApi.saveList(listCopy)
+      commit('updateFilters', { listId: state.currentListId, filters })
+    }
+  },
   addBookmark ({ commit, state }, bookmark) {
     if (!bookmark) {
       throw new Error('addBookmark: bookmark is empty')
@@ -118,6 +134,12 @@ const mutations = {
   },
   addList (state, list) {
     state.lists.push(list)
+  },
+  updateFilters (state, {listId, filters}) {
+    const index = state.lists.findIndex(l => l.id === listId)
+    if (index > -1) {
+      Vue.set(state.lists[index], 'filters', filters)
+    }
   },
   removeList (state, listId) {
     const index = state.lists.findIndex(l => l.id === listId)
