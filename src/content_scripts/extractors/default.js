@@ -8,8 +8,37 @@ function returnDataTemplate () {
   }
 }
 
+function getItemPropValue(node) {
+  var innerText = node.innerText;
+  if (innerText) {
+    return innerText.trim();
+  }
+  var attrContent = node.getAttribute('content');
+  if (attrContent) {
+    return attrContent.trim();
+  }
+  return '';
+}
+
 function microformat() {
   var returnData = returnDataTemplate();
+
+  var product = document.querySelector('[itemtype*="//schema.org/Product"]')
+  if (!product) {
+    return returnData;
+  }
+
+  var productNameNode = product.querySelector('[itemprop="name"]')
+  if (productNameNode) {
+    returnData.name = getItemPropValue(productNameNode);
+  }
+
+  var priceNode = product.querySelector('[itemtype*="//schema.org/Offer"] [itemprop="price"]')
+  returnData.price = getItemPropValue(priceNode)
+
+  var currencyNode = product.querySelector('[itemtype*="//schema.org/Offer"] [itemprop="priceCurrency"]')
+  returnData.currency = getItemPropValue(currencyNode)
+
   return returnData;
 }
 
@@ -39,15 +68,17 @@ function jsonld() {
 }
 
 function parse () {
-  var data = microformat();
-  if (data.name) {
-    return data;
-  }
+  try {
+    var data = microformat();
+    if (data.name) {
+      return data;
+    }
 
-  data = jsonld();
-  if (data.name) {
-    return data;
-  }
+    data = jsonld();
+    if (data.name) {
+      return data;
+    }
+  } catch (e) {}
 
   return returnDataTemplate()
 }
