@@ -5,7 +5,7 @@ module.exports = {
   name: 'bookmarks-workflow',
   description: 'Bookmarks lists workflow',
   author: 'Aliaksei Harabchuk <aliaksei.harabchuk@gmail.com>',
-  version: '0.1.1',
+  version: '0.2.1',
   icons: {
     '64': 'icons/64.png'
   },
