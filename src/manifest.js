@@ -5,7 +5,7 @@ module.exports = {
   name: 'bookmarks-workflow',
   description: 'Bookmarks lists workflow',
   author: 'Aliaksei Harabchuk <aliaksei.harabchuk@gmail.com>',
-  version: '0.1.0',
+  version: '0.1.1',
   icons: {
     '64': 'icons/64.png'
   },
@@ -26,17 +26,10 @@ module.exports = {
     default_title: 'Bookmarks Workflow',
     default_popup: 'pages/popup.html'
   },
-  content_scripts: [
-    {
-      matches: ['*://*/*'],
-      js: ['js/content.js'],
-      css: ['js/content.css']
-    }
-  ],
   manifest_version: 2,
   content_security_policy: "script-src 'self'; object-src 'self'",
   web_accessible_resources: [
-    'js/content.js',
-    'js/content.css'
+    'js/extractors/default.js',
+    'js/extractors/blocket.js',
   ],
 }
