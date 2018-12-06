@@ -1,5 +1,5 @@
 <template>
-  <div class="ListEditor1">
+  <div class="ListEditor">
       <el-form label-width="70px" label-position="left" size="mini">
         <el-form-item label="Title">
           <el-input
@@ -19,6 +19,7 @@
               :label="schema.title"
             />
           </el-select>
+          <div class="ListEditor-schemaDescription">{{ schemaDescription }}</div>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -59,6 +60,13 @@
           name: this.inputName,
           statusSchemaId: this.statusSchemaId
         }
+      },
+      schemaDescription () {
+        const schema = this.statusSchemas.find(s => s.id === this.statusSchemaId)
+        if (schema) {
+          return schema.description
+        }
+        return ''
       }
     },
     methods: {
@@ -83,5 +91,10 @@
   }
   .ListEditor-button {
     margin-left: 5px;
+  }
+  .ListEditor-schemaDescription {
+    margin-top: 7px;
+    font-size: 12px;
+    line-height: 16px;
   }
 </style>

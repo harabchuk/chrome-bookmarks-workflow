@@ -2,10 +2,10 @@
  * @see {@link https://developer.chrome.com/extensions/manifest}
  */
 module.exports = {
-  name: 'bookmarks-workflow',
-  description: 'Bookmarks lists workflow',
+  name: 'Bookmarks Workflow',
+  description: 'Work with bookmarks in a workflow like way.',
   author: 'Aliaksei Harabchuk <aliaksei.harabchuk@gmail.com>',
-  version: '0.2.1',
+  version: '0.2.2',
   icons: {
     '64': 'icons/64.png'
   },

@@ -10,7 +10,7 @@
       ></ListSelector>
     </div>
 
-    <div v-if="lists.length && currentUrl" class="AddBookmarkContainer">
+    <div v-if="!itemsContainCurrentUrl" class="AddBookmarkContainer">
       <AddBookmark @clicked="onNewBookmark" />
     </div>
 
@@ -90,7 +90,13 @@
         if (!this.statusFilter.length) {
           return this.items
         }
-        return this.items.filter((i) => this.statusFilter.includes(i.status))
+        return this.items.filter(i => this.statusFilter.includes(i.status))
+      },
+      itemsContainCurrentUrl () {
+        if (!this.currentUrl || !this.items || !this.items.length) {
+          return false
+        }
+        return !!this.items.find(i => i.url === this.currentUrl)
       }
     },
     methods: {

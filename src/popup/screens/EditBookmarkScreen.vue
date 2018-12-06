@@ -16,6 +16,7 @@
   import { mapState, mapActions, mapGetters } from 'vuex'
   import EditBookmark from '../../components/EditBookmark'
   import tabs from '../../api/tabs'
+  import domain from '../../utils/domain'
 
   export default {
     name: 'EditBookmarkScreen',
@@ -56,6 +57,10 @@
         const tags = []
         if (this.price) {
           tags.push(this.price + ' ' + this.currency)
+        }
+        const host = domain.getDomain(this.currentUrl)
+        if (host) {
+          tags.push(host)
         }
         return {
           title: this.productName || this.currentTitle,

@@ -1,5 +1,3 @@
-console.log('default extractor');
-
 function returnDataTemplate () {
   return {
     name: '',
@@ -78,7 +76,9 @@ function parse () {
     if (data.name) {
       return data;
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log('default extractor error', e);
+  }
 
   return returnDataTemplate()
 }
