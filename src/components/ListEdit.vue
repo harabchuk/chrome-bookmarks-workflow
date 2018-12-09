@@ -1,6 +1,6 @@
 <template>
   <div class="ListEditor">
-      <el-form label-width="70px" label-position="left" size="mini">
+    <el-form label-width="70px" label-position="left" size="mini">
         <el-form-item label="Title">
           <el-input
              placeholder="Enter the new list title"
@@ -31,6 +31,7 @@
             Save
           </el-button>
           <el-button
+            v-if="showCancel"
             type="default"
             size="mini"
             @click="onCancel"
@@ -39,7 +40,7 @@
           </el-button>
         </el-form-item>
       </el-form>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -52,7 +53,12 @@
       }
     },
     props: {
-      statusSchemas: Array
+      statusSchemas: Array,
+      showCancel: {
+        type: Boolean,
+        required: false,
+        default: true
+      }
     },
     computed: {
       currentList () {
@@ -83,14 +89,7 @@
 
 <style scoped>
   .ListEditor {
-    display: flex;
     margin-bottom: 5px;
-  }
-  .ListEditor-input {
-    flex: 1 0 0;
-  }
-  .ListEditor-button {
-    margin-left: 5px;
   }
   .ListEditor-schemaDescription {
     margin-top: 7px;

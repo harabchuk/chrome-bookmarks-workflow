@@ -3,6 +3,7 @@
     <span class="Popup-sectionTitle">New list</span>
     <ListEdit
       :statusSchemas="statusSchemas"
+      :showCancel="lists && lists.length"
       @canceled="onCancel"
       @saved="onSave"
     >
@@ -11,7 +12,7 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
+  import { mapActions, mapGetters, mapState } from 'vuex'
   import ListEdit from '../../components/ListEdit'
 
   export default {
@@ -21,6 +22,9 @@
       ListEdit
     },
     computed: {
+      ...mapState('bookmarks', [
+        'lists'
+      ]),
       ...mapGetters('bookmarks', [
         'statusSchemas'
       ])

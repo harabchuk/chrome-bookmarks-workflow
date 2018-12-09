@@ -5,9 +5,9 @@ module.exports = {
   name: 'Bookmarks Workflow',
   description: 'Work with bookmarks in a workflow like way.',
   author: 'Aliaksei Harabchuk <aliaksei.harabchuk@gmail.com>',
-  version: '0.2.2',
+  version: '0.2.5',
   icons: {
-    '64': 'icons/64.png'
+    '128': 'icons/128.png'
   },
   /**
    * @see {@link https://developer.chrome.com/extensions/declare_permissions}
